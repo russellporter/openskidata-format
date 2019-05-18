@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/russellporter/openskidata-format/issues"
   },
-  "homepage": "https://github.com/russellporter/openskidata-format#readme"
+  "homepage": "https://github.com/russellporter/openskidata-format#readme",
+  "devDependencies": {
+    "@types/geojson": "^7946.0.7",
+    "typescript": "^3.4.5"
+  }
 }
