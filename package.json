@@ -1,0 +1,19 @@
+{
+  "name": "openskidata-format",
+  "version": "0.1.0",
+  "description": "Data format for OpenSkiMap.org",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/russellporter/openskidata-format.git"
+  },
+  "author": "Russell Porter",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/russellporter/openskidata-format/issues"
+  },
+  "homepage": "https://github.com/russellporter/openskidata-format#readme"
+}
