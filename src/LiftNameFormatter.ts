@@ -1,6 +1,6 @@
 import { LiftProperties, LiftType } from ".";
 
-export function nameAndType(properties: LiftProperties) {
+export function getLiftNameAndType(properties: LiftProperties) {
   const name = properties.name;
 
   let liftTypePrefix = "";
