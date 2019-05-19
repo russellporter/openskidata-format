@@ -1,10 +1,12 @@
 {
   "name": "openskidata-format",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "Data format for OpenSkiMap.org",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "build": "rm -rf dist/ && tsc",
+    "release": "npm run-script build && npm publish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

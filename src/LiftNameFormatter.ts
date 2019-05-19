@@ -3,45 +3,7 @@ import { LiftProperties, LiftType } from ".";
 export function getLiftNameAndType(properties: LiftProperties) {
   const name = properties.name;
 
-  let liftTypePrefix = "";
-  let liftType =
-    implicitOccupancyLiftType(properties) || getLiftType(properties);
-  let liftTypeSuffix = "";
-
-  if (!isOccupancyImplicit(properties)) {
-    const occupancy = properties.occupancy;
-    if (occupancy) {
-      liftTypePrefix += occupancy + "p ";
-    }
-  }
-
-  const duration = properties.duration;
-  if (duration) {
-    liftTypeSuffix = duration + " mins";
-  }
-
-  const heated = properties.heating;
-  const bubble = properties.bubble;
-  if (heated === true) {
-    liftTypePrefix = "Heated " + liftTypePrefix;
-  } else if (
-    bubble === true &&
-    properties.liftType !== LiftType.CableCar &&
-    properties.liftType !== LiftType.Gondola
-  ) {
-    liftTypePrefix = "Bubble " + liftTypePrefix;
-  }
-
-  const isImplicit = isLiftTypeImplicit(properties);
-  if (isImplicit) {
-    if (liftTypePrefix) {
-      liftType = liftTypePrefix.trim() + " - " + liftTypeSuffix;
-    } else {
-      liftType = liftTypeSuffix;
-    }
-  } else if (liftType) {
-    liftType = liftTypePrefix + liftType + " - " + liftTypeSuffix;
-  }
+  const liftType = getAugmentedLiftType(properties);
 
   if (name && liftType) {
     return name + " (" + liftType + ")";
@@ -50,6 +12,44 @@ export function getLiftNameAndType(properties: LiftProperties) {
   } else {
     return liftType;
   }
+}
+
+function getAugmentedLiftType(properties: LiftProperties): string | null {
+  const components = [];
+
+  const heated = properties.heating;
+  const bubble = properties.bubble;
+  if (heated === true) {
+    components.push("Heated");
+  }
+
+  if (
+    bubble === true &&
+    properties.liftType !== LiftType.CableCar &&
+    properties.liftType !== LiftType.Gondola
+  ) {
+    components.push("Bubble");
+  }
+
+  if (!isOccupancyImplicit(properties) && properties.occupancy) {
+    components.push(properties.occupancy + "p");
+  }
+
+  const liftType =
+    implicitOccupancyLiftType(properties) || getLiftType(properties);
+  if (liftType !== null) {
+    components.push(liftType);
+  }
+
+  const duration = properties.duration ? properties.duration + " mins" : null;
+  if (duration !== null) {
+    if (components.length > 0) {
+      components.push("-");
+    }
+    components.push(duration);
+  }
+
+  return components.join(" ");
 }
 
 function implicitOccupancyLiftType(properties: LiftProperties) {
