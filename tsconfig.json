@@ -3,13 +3,15 @@
     "sourceMap": true,
     "strict": true,
     "moduleResolution": "node",
-    "noEmit": true,
+    "module": "commonjs",
     "esModuleInterop": true,
     "importHelpers": true,
-    "lib": [],
+    "target": "es6",
+    "lib": ["es2015"],
     "types": [],
     "typeRoots": ["./node_modules/@types"],
-    "baseUrl": "."
-  },
-  "include": ["./src/**/*"]
+    "rootDir": "./src/",
+    "outDir": "./dist",
+    "declaration": true
+  }
 }

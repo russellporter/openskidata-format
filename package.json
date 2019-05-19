@@ -2,7 +2,8 @@
   "name": "openskidata-format",
   "version": "0.1.0",
   "description": "Data format for OpenSkiMap.org",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,5 +20,8 @@
   "devDependencies": {
     "@types/geojson": "^7946.0.7",
     "typescript": "^3.4.5"
+  },
+  "dependencies": {
+    "tslib": "^1.9.3"
   }
 }
