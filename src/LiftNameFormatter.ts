@@ -41,15 +41,26 @@ function getAugmentedLiftType(properties: LiftProperties): string | null {
     components.push(liftType);
   }
 
-  const duration = properties.duration ? properties.duration + " mins" : null;
-  if (duration !== null) {
+  if (properties.duration !== null) {
     if (components.length > 0) {
       components.push("-");
     }
-    components.push(duration);
+    components.push(formattedDuration(properties.duration));
   }
 
   return components.join(" ");
+}
+
+function formattedDuration(duration: number): string {
+  let minutes: string | number = Math.floor(duration / 60);
+  let seconds: string | number = duration - minutes * 60;
+  if (minutes < 10) {
+    minutes = "0" + minutes;
+  }
+  if (seconds < 10) {
+    seconds = "0" + seconds;
+  }
+  return minutes + ":" + seconds;
 }
 
 function implicitOccupancyLiftType(properties: LiftProperties) {
