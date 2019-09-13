@@ -99,7 +99,7 @@ export function getColorName(color: string): ColorName {
 
 export function getRunColor(
   convention: RunConvention,
-  difficulty: RunDifficulty
+  difficulty: RunDifficulty | null
 ): string {
   switch (convention) {
     case RunConvention.EUROPE:
