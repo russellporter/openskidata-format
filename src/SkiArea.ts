@@ -1,7 +1,7 @@
 import { Activity } from "./Activity";
 import { FeatureType } from "./FeatureType";
 import { LiftType } from "./Lift";
-import { RunDifficulty } from "./Run";
+import { RunConvention, RunDifficulty } from "./Run";
 import Source from "./Source";
 import { Status } from "./Status";
 
@@ -21,6 +21,7 @@ export interface SkiAreaProperties {
   generated: boolean;
   statistics?: Statistics;
   status: Status | null;
+  runConvention: RunConvention;
 }
 
 export interface Statistics {
@@ -33,15 +34,15 @@ export interface RunStatistics {
 }
 
 export type RunStatisticsByActivityAndDifficulty = {
-  [key in Activity | "other"]: { byDifficulty: RunStatisticsByDifficulty }
+  [key in Activity | "other"]: { byDifficulty: RunStatisticsByDifficulty };
 };
 
 export type RunStatisticsByDifficulty = {
-  [key in RunDifficulty | "other"]: { count: number; lengthInKm: number }
+  [key in RunDifficulty | "other"]: { count: number; lengthInKm: number };
 };
 
 export interface LiftStatistics {
   byType: {
-    [key in LiftType | "other"]: { count: number; lengthInKm: number }
+    [key in LiftType | "other"]: { count: number; lengthInKm: number };
   };
 }
