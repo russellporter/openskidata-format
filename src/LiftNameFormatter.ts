@@ -151,35 +151,6 @@ function isOccupancyImplicit(properties: LiftProperties) {
   ]);
 }
 
-function isLiftTypeImplicit(properties: LiftProperties) {
-  return containsAny(properties.name, [
-    "cable car",
-    "tramway",
-    "gondola",
-    "telecabin",
-    "t-bar",
-    "j-bar",
-    "drag",
-    "platter",
-    "rope tow",
-    "ropetow",
-    "rope-tow",
-    "carpet",
-    "sesselbahn",
-    "single",
-    "double",
-    "triple",
-    "quad",
-    "1er",
-    "2er",
-    "3er",
-    "4er",
-    "6er",
-    "8er",
-    "funicular"
-  ]);
-}
-
 function containsAny(input: string | null, lowerCaseSearchList: string[]) {
   if (input === null) {
     return false;
