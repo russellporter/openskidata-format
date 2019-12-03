@@ -1,4 +1,5 @@
 import * as GeoJSON from "geojson";
+import { ElevationProfile } from "./ElevationProfile";
 import { FeatureType } from "./FeatureType";
 
 export type RunGeometry = GeoJSON.LineString | GeoJSON.Polygon;
@@ -21,6 +22,7 @@ export type RunProperties = {
   colorName: ColorName;
   grooming: RunGrooming | null;
   skiAreas: string[];
+  elevationProfile: ElevationProfile | null;
 };
 
 export enum RunUse {
