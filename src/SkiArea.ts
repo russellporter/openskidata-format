@@ -19,17 +19,21 @@ export interface SkiAreaProperties {
   sources: Source[];
   activities: Activity[];
   generated: boolean;
-  statistics?: Statistics;
+  statistics?: SkiAreaStatistics;
   status: Status | null;
   runConvention: RunConvention;
 }
 
-export interface Statistics {
+export interface SkiAreaStatistics {
   runs: RunStatistics;
   lifts: LiftStatistics;
+  minElevation?: number;
+  maxElevation?: number;
 }
 
 export interface RunStatistics {
+  minElevation?: number;
+  maxElevation?: number;
   byActivity: RunStatisticsByActivityAndDifficulty;
 }
 
@@ -42,7 +46,17 @@ export type RunStatisticsByDifficulty = {
 };
 
 export interface LiftStatistics {
+  minElevation?: number;
+  maxElevation?: number;
   byType: {
     [key in LiftType | "other"]: { count: number; lengthInKm: number };
   };
+}
+
+export interface MapObjectStatistics {
+  count: number;
+  lengthInKm: number;
+  minElevation?: number;
+  maxElevation?: number;
+  combinedElevationChange?: number;
 }
