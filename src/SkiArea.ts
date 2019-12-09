@@ -38,18 +38,18 @@ export interface RunStatistics {
 }
 
 export type RunStatisticsByActivityAndDifficulty = {
-  [key in Activity | "other"]: { byDifficulty: RunStatisticsByDifficulty };
+  [key in Activity | "other"]?: { byDifficulty: RunStatisticsByDifficulty };
 };
 
 export type RunStatisticsByDifficulty = {
-  [key in RunDifficulty | "other"]: { count: number; lengthInKm: number };
+  [key in RunDifficulty | "other"]?: { count: number; lengthInKm: number };
 };
 
 export interface LiftStatistics {
   minElevation?: number;
   maxElevation?: number;
   byType: {
-    [key in LiftType | "other"]: { count: number; lengthInKm: number };
+    [key in LiftType | "other"]?: { count: number; lengthInKm: number };
   };
 }
 
