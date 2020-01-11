@@ -1,6 +1,7 @@
 import * as GeoJSON from "geojson";
 import { ElevationProfile } from "./ElevationProfile";
 import { FeatureType } from "./FeatureType";
+import { Status } from "./Status";
 
 export type RunGeometry = GeoJSON.LineString | GeoJSON.Polygon;
 
@@ -12,6 +13,7 @@ export type RunProperties = {
   id: string;
   name: string | null;
   ref: string | null;
+  status: Status;
   description: string | null;
   difficulty: RunDifficulty | null;
   oneway: boolean | null;
