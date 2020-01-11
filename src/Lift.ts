@@ -19,6 +19,7 @@ export type LiftProperties = {
   color: string;
   name: string | null;
   ref: string | null;
+  description: string | null;
   oneway: boolean | null;
   occupancy: number | null;
   capacity: number | null;
