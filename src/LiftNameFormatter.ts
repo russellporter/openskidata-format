@@ -1,26 +1,26 @@
-import { LiftProperties, LiftType } from ".";
+import { LiftProperties, LiftType } from '.'
 
 export function getLiftNameAndType(properties: LiftProperties) {
-  const name = properties.name;
+  const name = properties.name
 
-  const liftType = getAugmentedLiftType(properties);
+  const liftType = getAugmentedLiftType(properties)
 
   if (name && liftType) {
-    return name + " (" + liftType + ")";
+    return name + ' (' + liftType + ')'
   } else if (name) {
-    return name;
+    return name
   } else {
-    return liftType;
+    return liftType
   }
 }
 
 function getAugmentedLiftType(properties: LiftProperties): string | null {
-  const components = [];
+  const components = []
 
-  const heated = properties.heating;
-  const bubble = properties.bubble;
+  const heated = properties.heating
+  const bubble = properties.bubble
   if (heated === true) {
-    components.push("Heated");
+    components.push('Heated')
   }
 
   if (
@@ -28,138 +28,138 @@ function getAugmentedLiftType(properties: LiftProperties): string | null {
     properties.liftType !== LiftType.CableCar &&
     properties.liftType !== LiftType.Gondola
   ) {
-    components.push("Bubble");
+    components.push('Bubble')
   }
 
   if (!isOccupancyImplicit(properties) && properties.occupancy) {
-    components.push(properties.occupancy + "p");
+    components.push(properties.occupancy + 'p')
   }
 
   const liftType =
-    implicitOccupancyLiftType(properties) || getLiftType(properties);
+    implicitOccupancyLiftType(properties) || getLiftType(properties)
   if (liftType !== null) {
-    components.push(liftType);
+    components.push(liftType)
   }
 
   if (properties.duration !== null) {
     if (components.length > 0) {
-      components.push("-");
+      components.push('-')
     }
-    components.push(formattedDuration(properties.duration));
+    components.push(formattedDuration(properties.duration))
   }
 
-  return components.join(" ");
+  return components.join(' ')
 }
 
 function formattedDuration(duration: number): string {
-  let minutes: string | number = Math.floor(duration / 60);
-  let seconds: string | number = duration - minutes * 60;
+  let minutes: string | number = Math.floor(duration / 60)
+  let seconds: string | number = duration - minutes * 60
   if (minutes < 10) {
-    minutes = "0" + minutes;
+    minutes = '0' + minutes
   }
   if (seconds < 10) {
-    seconds = "0" + seconds;
+    seconds = '0' + seconds
   }
-  return minutes + ":" + seconds;
+  return minutes + ':' + seconds
 }
 
 function implicitOccupancyLiftType(properties: LiftProperties) {
-  const occupancy = properties.occupancy;
+  const occupancy = properties.occupancy
   if (properties.liftType === LiftType.ChairLift) {
     switch (occupancy) {
       case 1:
-        return "Single";
+        return 'Single'
       case 2:
-        return "Double";
+        return 'Double'
       case 3:
-        return "Triple";
+        return 'Triple'
       case 4:
-        return "Quad";
+        return 'Quad'
       default:
-        return null;
+        return null
     }
   }
 
   switch (properties.liftType) {
     case LiftType.TBar:
-      return "T-bar";
+      return 'T-bar'
     case LiftType.JBar:
-      return "J-bar";
+      return 'J-bar'
     case LiftType.Platter:
-      return "Platter";
+      return 'Platter'
     case LiftType.RopeTow:
-      return "Ropetow";
+      return 'Ropetow'
     case LiftType.MagicCarpet:
-      return "Magic Carpet";
+      return 'Magic Carpet'
   }
-  return null;
+  return null
 }
 
 function getLiftType(properties: LiftProperties) {
   switch (properties.liftType) {
     case LiftType.CableCar:
-      return "Cable Car";
+      return 'Cable Car'
     case LiftType.Gondola:
-      return "Gondola";
+      return 'Gondola'
     case LiftType.ChairLift:
-      return "Chairlift";
+      return 'Chairlift'
     case LiftType.MixedLift:
-      return "Hybrid";
+      return 'Hybrid'
     case LiftType.DragLift:
-      return "Drag lift";
+      return 'Drag lift'
     case LiftType.TBar:
-      return "T-bar";
+      return 'T-bar'
     case LiftType.JBar:
-      return "J-bar";
+      return 'J-bar'
     case LiftType.Platter:
-      return "Platter";
+      return 'Platter'
     case LiftType.RopeTow:
-      return "Ropetow";
+      return 'Ropetow'
     case LiftType.MagicCarpet:
-      return "Magic Carpet";
+      return 'Magic Carpet'
     case LiftType.Funicular:
-      return "Funicular";
+      return 'Funicular'
     default:
-      return null;
+      return null
   }
 }
 
 function isOccupancyImplicit(properties: LiftProperties) {
-  const implicitLiftType = implicitOccupancyLiftType(properties);
+  const implicitLiftType = implicitOccupancyLiftType(properties)
   if (implicitLiftType) {
-    return true;
+    return true
   }
 
   return containsAny(properties.name, [
-    "t-bar",
-    "j-bar",
-    "platter",
-    "rope tow",
-    "ropetow",
-    "rope-tow",
-    "carpet",
-    "single",
-    "double",
-    "triple",
-    "quad",
-    "1er",
-    "2er",
-    "3er",
-    "4er",
-    "6er",
-    "8er"
-  ]);
+    't-bar',
+    'j-bar',
+    'platter',
+    'rope tow',
+    'ropetow',
+    'rope-tow',
+    'carpet',
+    'single',
+    'double',
+    'triple',
+    'quad',
+    '1er',
+    '2er',
+    '3er',
+    '4er',
+    '6er',
+    '8er',
+  ])
 }
 
 function containsAny(input: string | null, lowerCaseSearchList: string[]) {
   if (input === null) {
-    return false;
+    return false
   }
 
-  const lowerCaseInput = input.toLowerCase();
+  const lowerCaseInput = input.toLowerCase()
   return (
     lowerCaseSearchList.findIndex(searchItem => {
-      return lowerCaseInput.includes(searchItem);
+      return lowerCaseInput.includes(searchItem)
     }) !== -1
-  );
+  )
 }
