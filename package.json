@@ -4,6 +4,9 @@
   "description": "Data format for OpenSkiMap.org",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rm -rf dist/ && tsc",
     "release": "npm run-script build && npm publish",
