@@ -7,7 +7,10 @@ import { Status } from './Status'
 
 export type SkiAreaFeature = GeoJSON.Feature<SkiAreaGeometry, SkiAreaProperties>
 
-export type SkiAreaGeometry = GeoJSON.Point
+export type SkiAreaGeometry =
+  | GeoJSON.Point
+  | GeoJSON.Polygon
+  | GeoJSON.MultiPolygon
 
 export interface SkiAreaProperties {
   type: FeatureType.SkiArea
