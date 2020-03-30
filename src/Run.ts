@@ -65,7 +65,7 @@ export enum ColorName {
   RED = 'red',
   BLACK = 'black',
   ORANGE = 'orange',
-  PURPLE = 'purple',
+  GREY = 'grey',
 }
 
 export enum RunConvention {
@@ -80,7 +80,7 @@ const BLUE_COLOR = 'hsl(208, 100%, 33%)'
 const RED_COLOR = 'hsl(359, 94%, 53%)'
 const BLACK_COLOR = 'hsl(0, 0%, 0%)'
 const ORANGE_COLOR = 'hsl(34, 100%, 50%)'
-const PURPLE_COLOR = 'hsl(298, 87%, 43%)'
+const GREY_COLOR = 'hsl(0, 0%, 65%)'
 
 export function getColorName(color: string): ColorName {
   switch (color) {
@@ -94,8 +94,8 @@ export function getColorName(color: string): ColorName {
       return ColorName.BLACK
     case ORANGE_COLOR:
       return ColorName.ORANGE
-    case PURPLE_COLOR:
-      return ColorName.PURPLE
+    case GREY_COLOR:
+      return ColorName.GREY
     default:
       throw 'missing color'
   }
@@ -121,7 +121,7 @@ export function getRunColor(
         case RunDifficulty.EXTREME:
           return ORANGE_COLOR
         default:
-          return PURPLE_COLOR
+          return GREY_COLOR
       }
     case RunConvention.JAPAN:
       switch (difficulty) {
@@ -137,7 +137,7 @@ export function getRunColor(
         case RunDifficulty.EXTREME:
           return ORANGE_COLOR
         default:
-          return PURPLE_COLOR
+          return GREY_COLOR
       }
     case RunConvention.NORTH_AMERICA:
       switch (difficulty) {
@@ -153,7 +153,7 @@ export function getRunColor(
         case RunDifficulty.EXTREME:
           return ORANGE_COLOR
         default:
-          return PURPLE_COLOR
+          return GREY_COLOR
       }
   }
 }
