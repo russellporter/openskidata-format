@@ -80,7 +80,7 @@ const BLUE_COLOR = 'hsl(208, 100%, 33%)'
 const RED_COLOR = 'hsl(359, 94%, 53%)'
 const BLACK_COLOR = 'hsl(0, 0%, 0%)'
 const ORANGE_COLOR = 'hsl(34, 100%, 50%)'
-const GREY_COLOR = 'hsl(0, 0%, 65%)'
+const GREY_COLOR = 'hsl(0, 0%, 35%)'
 
 export function getColorName(color: string): ColorName {
   switch (color) {
