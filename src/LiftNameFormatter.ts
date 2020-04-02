@@ -63,7 +63,7 @@ function formattedDuration(duration: number): string {
   return minutes + ':' + seconds
 }
 
-function implicitOccupancyLiftType(properties: LiftProperties) {
+function implicitOccupancyLiftType(properties: LiftProperties): string | null {
   const occupancy = properties.occupancy
   if (properties.liftType === LiftType.ChairLift) {
     switch (occupancy) {
@@ -95,7 +95,7 @@ function implicitOccupancyLiftType(properties: LiftProperties) {
   return null
 }
 
-function getLiftType(properties: LiftProperties) {
+function getLiftType(properties: LiftProperties): string {
   switch (properties.liftType) {
     case LiftType.CableCar:
       return 'Cable Car'
@@ -119,8 +119,8 @@ function getLiftType(properties: LiftProperties) {
       return 'Magic Carpet'
     case LiftType.Funicular:
       return 'Funicular'
-    default:
-      return null
+    case LiftType.RackRailway:
+      return 'Rack Railway'
   }
 }
 
