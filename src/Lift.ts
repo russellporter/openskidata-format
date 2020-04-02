@@ -41,4 +41,5 @@ export enum LiftType {
   RopeTow = 'rope_tow',
   MagicCarpet = 'magic_carpet',
   Funicular = 'funicular',
+  RackRailway = 'rack_railway',
 }
