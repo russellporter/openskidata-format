@@ -1,11 +1,12 @@
 {
   "name": "openskidata-format",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Data format for OpenSkiMap.org",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "scripts": {
     "build": "rm -rf dist/ && tsc",
