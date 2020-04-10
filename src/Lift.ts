@@ -43,3 +43,32 @@ export enum LiftType {
   Funicular = 'funicular',
   RackRailway = 'rack_railway',
 }
+
+export function getFormattedLiftType(liftType: LiftType): string {
+  switch (liftType) {
+    case LiftType.CableCar:
+      return 'Cable Car'
+    case LiftType.Gondola:
+      return 'Gondola'
+    case LiftType.ChairLift:
+      return 'Chairlift'
+    case LiftType.MixedLift:
+      return 'Hybrid'
+    case LiftType.DragLift:
+      return 'Drag lift'
+    case LiftType.TBar:
+      return 'T-bar'
+    case LiftType.JBar:
+      return 'J-bar'
+    case LiftType.Platter:
+      return 'Platter'
+    case LiftType.RopeTow:
+      return 'Ropetow'
+    case LiftType.MagicCarpet:
+      return 'Magic Carpet'
+    case LiftType.Funicular:
+      return 'Funicular'
+    case LiftType.RackRailway:
+      return 'Rack Railway'
+  }
+}

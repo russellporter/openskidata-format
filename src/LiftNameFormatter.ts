@@ -1,4 +1,5 @@
 import { LiftProperties, LiftType } from '.'
+import { getFormattedLiftType } from './Lift'
 
 export function getLiftNameAndType(properties: LiftProperties) {
   const name = properties.name
@@ -36,7 +37,8 @@ function getAugmentedLiftType(properties: LiftProperties): string | null {
   }
 
   const liftType =
-    implicitOccupancyLiftType(properties) || getLiftType(properties)
+    implicitOccupancyLiftType(properties) ||
+    getFormattedLiftType(properties.liftType)
   if (liftType !== null) {
     components.push(liftType)
   }
@@ -95,35 +97,6 @@ function implicitOccupancyLiftType(properties: LiftProperties): string | null {
   return null
 }
 
-function getLiftType(properties: LiftProperties): string {
-  switch (properties.liftType) {
-    case LiftType.CableCar:
-      return 'Cable Car'
-    case LiftType.Gondola:
-      return 'Gondola'
-    case LiftType.ChairLift:
-      return 'Chairlift'
-    case LiftType.MixedLift:
-      return 'Hybrid'
-    case LiftType.DragLift:
-      return 'Drag lift'
-    case LiftType.TBar:
-      return 'T-bar'
-    case LiftType.JBar:
-      return 'J-bar'
-    case LiftType.Platter:
-      return 'Platter'
-    case LiftType.RopeTow:
-      return 'Ropetow'
-    case LiftType.MagicCarpet:
-      return 'Magic Carpet'
-    case LiftType.Funicular:
-      return 'Funicular'
-    case LiftType.RackRailway:
-      return 'Rack Railway'
-  }
-}
-
 function isOccupancyImplicit(properties: LiftProperties) {
   const implicitLiftType = implicitOccupancyLiftType(properties)
   if (implicitLiftType) {
@@ -158,7 +131,7 @@ function containsAny(input: string | null, lowerCaseSearchList: string[]) {
 
   const lowerCaseInput = input.toLowerCase()
   return (
-    lowerCaseSearchList.findIndex(searchItem => {
+    lowerCaseSearchList.findIndex((searchItem) => {
       return lowerCaseInput.includes(searchItem)
     }) !== -1
   )
