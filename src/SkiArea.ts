@@ -49,9 +49,13 @@ export type RunStatisticsByDifficulty = {
 export interface LiftStatistics {
   minElevation?: number
   maxElevation?: number
-  byType: {
-    [key in LiftType | 'other']?: { count: number; lengthInKm: number }
-  }
+  byType: LiftStatisticsByType
+}
+
+export type LiftStatisticsByTypeKey = LiftType | 'other'
+
+export type LiftStatisticsByType = {
+  [key in LiftStatisticsByTypeKey]?: { count: number; lengthInKm: number }
 }
 
 export interface MapObjectStatistics {
