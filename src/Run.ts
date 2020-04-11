@@ -1,6 +1,7 @@
 import * as GeoJSON from 'geojson'
 import { ElevationProfile } from './ElevationProfile'
 import { FeatureType } from './FeatureType'
+import Source from './Source'
 import { Status } from './Status'
 
 export type RunGeometry = GeoJSON.LineString | GeoJSON.Polygon
@@ -25,6 +26,7 @@ export type RunProperties = {
   grooming: RunGrooming | null
   skiAreas: string[]
   elevationProfile: ElevationProfile | null
+  sources: Source[]
 }
 
 export enum RunUse {

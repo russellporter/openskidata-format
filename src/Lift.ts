@@ -1,4 +1,5 @@
 import { FeatureType } from './FeatureType'
+import Source from './Source'
 import { Status } from './Status'
 
 export type LiftFeature = GeoJSON.Feature<LiftGeometry, LiftProperties>
@@ -27,6 +28,7 @@ export type LiftProperties = {
   bubble: boolean | null
   heating: boolean | null
   skiAreas: string[]
+  sources: Source[]
 }
 
 export enum LiftType {
