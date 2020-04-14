@@ -17,6 +17,7 @@ export type RunProperties = {
   status: Status
   description: string | null
   difficulty: RunDifficulty | null
+  convention: RunConvention
   oneway: boolean | null
   lit: boolean | null
   gladed: boolean | null
