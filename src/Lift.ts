@@ -1,3 +1,4 @@
+import { Location } from '.'
 import { FeatureType } from './FeatureType'
 import Source from './Source'
 import { Status } from './Status'
@@ -29,6 +30,7 @@ export type LiftProperties = {
   heating: boolean | null
   skiAreas: string[]
   sources: Source[]
+  location: Location | null
 }
 
 export enum LiftType {

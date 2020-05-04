@@ -1,6 +1,7 @@
 import * as GeoJSON from 'geojson'
 import { ElevationProfile } from './ElevationProfile'
 import { FeatureType } from './FeatureType'
+import { Location } from './Location'
 import Source from './Source'
 import { Status } from './Status'
 
@@ -28,6 +29,7 @@ export type RunProperties = {
   skiAreas: string[]
   elevationProfile: ElevationProfile | null
   sources: Source[]
+  location: Location | null
 }
 
 export enum RunUse {

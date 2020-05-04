@@ -1,6 +1,7 @@
 import { Activity } from './Activity'
 import { FeatureType } from './FeatureType'
 import { LiftType } from './Lift'
+import { Location } from './Location'
 import { RunConvention, RunDifficulty } from './Run'
 import Source from './Source'
 import { Status } from './Status'
@@ -23,6 +24,7 @@ export interface SkiAreaProperties {
   status: Status | null
   runConvention: RunConvention
   website: string | null
+  location: Location | null
 }
 
 export interface SkiAreaStatistics {
