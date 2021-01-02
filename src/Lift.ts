@@ -1,4 +1,4 @@
-import { Location } from '.'
+import { Location, SkiAreaFeature } from '.'
 import { FeatureType } from './FeatureType'
 import Source from './Source'
 import { Status } from './Status'
@@ -28,7 +28,7 @@ export type LiftProperties = {
   duration: number | null
   bubble: boolean | null
   heating: boolean | null
-  skiAreas: string[]
+  skiAreas: SkiAreaFeature[]
   sources: Source[]
   location: Location | null
 }

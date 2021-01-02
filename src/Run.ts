@@ -2,6 +2,7 @@ import * as GeoJSON from 'geojson'
 import { ElevationProfile } from './ElevationProfile'
 import { FeatureType } from './FeatureType'
 import { Location } from './Location'
+import { SkiAreaFeature } from './SkiArea'
 import Source from './Source'
 import { Status } from './Status'
 
@@ -26,7 +27,7 @@ export type RunProperties = {
   color: string
   colorName: ColorName
   grooming: RunGrooming | null
-  skiAreas: string[]
+  skiAreas: SkiAreaFeature[]
   elevationProfile: ElevationProfile | null
   sources: Source[]
   location: Location | null
