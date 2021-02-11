@@ -23,7 +23,7 @@ export interface SkiAreaProperties {
   statistics?: SkiAreaStatistics
   status: Status | null
   runConvention: RunConvention
-  website: string | null
+  websites: [string]
   location: Location | null
 }
 
