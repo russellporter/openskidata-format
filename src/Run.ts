@@ -45,6 +45,7 @@ export enum RunUse {
   SnowPark = 'snow_park',
   Playground = 'playground',
   Connection = 'connection',
+  Fatbike = 'fatbike',
 }
 
 export enum RunGrooming {
