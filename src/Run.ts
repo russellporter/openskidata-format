@@ -31,7 +31,7 @@ export type RunProperties = {
   elevationProfile: ElevationProfile | null
   sources: Source[]
   location: Location | null
-  websites: [string]
+  websites: string[]
 }
 
 export enum RunUse {

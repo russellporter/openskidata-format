@@ -31,7 +31,7 @@ export type LiftProperties = {
   skiAreas: SkiAreaFeature[]
   sources: Source[]
   location: Location | null
-  websites: [string]
+  websites: string[]
 }
 
 export enum LiftType {
