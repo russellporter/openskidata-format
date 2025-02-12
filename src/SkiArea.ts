@@ -24,6 +24,7 @@ export interface SkiAreaProperties {
   status: Status | null
   runConvention: RunConvention
   websites: string[]
+  wikidata_id: string | null
   location: Location | null
 }
 

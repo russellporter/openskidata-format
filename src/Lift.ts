@@ -32,6 +32,7 @@ export type LiftProperties = {
   sources: Source[]
   location: Location | null
   websites: string[]
+  wikidata_id: string | null
 }
 
 export enum LiftType {

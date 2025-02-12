@@ -32,6 +32,7 @@ export type RunProperties = {
   sources: Source[]
   location: Location | null
   websites: string[]
+  wikidata_id: string | null
 }
 
 export enum RunUse {
