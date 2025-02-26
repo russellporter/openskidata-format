@@ -2,6 +2,7 @@ import { FeatureType } from './FeatureType'
 import { SkiAreaSummaryFeature } from './SkiArea'
 import { Source } from './Source'
 import { Status } from './Status'
+import { exhaustiveMatchingGuard } from './util/exhaustiveMatchingGuard'
 
 export type LiftFeature = GeoJSON.Feature<LiftGeometry, LiftProperties>
 
@@ -24,6 +25,7 @@ export type LiftGeometry =
  * - Some lifts included in the dataset may be for other purposes (amusement parks, etc).
  *
  * Properties:
+ * @property {FeatureType.Lift} type - The feature type, which is always 'Lift'.
  * @property {string} id - Unique identifier for the lift. The ID is just a hash of the feature, so will change if the feature changes in any way.
  * @property {LiftType} liftType - Type of lift (e.g. chair_lift, gondola). Derived from OpenStreetMap aerialway/railway tags.
  * @property {Status} status - Operational status of the lift. Derived from OpenStreetMap lifecycle tags.
@@ -54,6 +56,7 @@ export type LiftProperties = {
   occupancy: number | null
   capacity: number | null
   duration: number | null
+  detachable: boolean | null
   bubble: boolean | null
   heating: boolean | null
   skiAreas: SkiAreaSummaryFeature[]
@@ -103,6 +106,8 @@ export function getFormattedLiftType(liftType: LiftType): string {
       return 'Funicular'
     case LiftType.RackRailway:
       return 'Rack Railway'
+    default:
+      return exhaustiveMatchingGuard(liftType)
   }
 }
 
@@ -119,5 +124,7 @@ export function getLiftColor(status: Status): string {
     case Status.Construction:
     case Status.Operating:
       return BRIGHT_RED_COLOR
+    default:
+      return exhaustiveMatchingGuard(status)
   }
 }

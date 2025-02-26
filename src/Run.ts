@@ -4,6 +4,7 @@ import { FeatureType } from './FeatureType'
 import { SkiAreaSummaryFeature } from './SkiArea'
 import { Source } from './Source'
 import { Status } from './Status'
+import { exhaustiveMatchingGuard } from './util/exhaustiveMatchingGuard'
 
 export type RunGeometry = GeoJSON.LineString | GeoJSON.Polygon
 
@@ -26,7 +27,10 @@ export type RunGeometry = GeoJSON.LineString | GeoJSON.Polygon
 export type RunFeature = GeoJSON.Feature<RunGeometry, RunProperties>
 
 /**
+ * Represents the properties of a ski run.
+ *
  * Properties:
+ * @property {FeatureType.Run} type - The feature type, which is always 'Run'.
  * @property {RunUse[]} uses - Use types for the run (e.g. downhill, nordic), derived from OpenStreetMap "piste:type" tags.
  * @property {string} id - Unique identifier for the run. The ID is just a hash of the feature, so will change if the feature changes in any way.
  * @property {string | null} name - Name of the run, if available
@@ -226,5 +230,7 @@ export function getRunColor(
         default:
           return RunColor.GREY
       }
+    default:
+      return exhaustiveMatchingGuard(convention)
   }
 }

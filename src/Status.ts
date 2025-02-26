@@ -1,5 +1,7 @@
 /**
- * Status of a feature. Note that this is not real-time status but indicates whether a feature is in operation when conditions permit or is abandoned, etc.
+ * Status of a feature.
+ *
+ * Note that this is not real-time status but indicates whether a feature is in operation when conditions permit or is abandoned, etc.
  *
  * Primarily derived from OpenStreetMap tags.
  * Additionally, Skimap.org data provides status information for ski area features only.
