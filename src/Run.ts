@@ -105,7 +105,7 @@ export enum RunDifficulty {
   EXTREME = 'extreme',
 }
 
-export enum RunColor {
+export enum RunColorName {
   GREEN = 'green',
   BLUE = 'blue',
   RED = 'red',
@@ -157,78 +157,85 @@ export enum RunDifficultyConvention {
   NORTH_AMERICA = 'north_america',
 }
 
-export function getColorValue(color: RunColor): RunColorValue {
+export function getRunColor(
+  convention: RunDifficultyConvention,
+  difficulty: RunDifficulty | null,
+): RunColorValue {
+  return runColorNameToValue(getRunColorName(convention, difficulty))
+}
+
+export function runColorNameToValue(color: RunColorName): RunColorValue {
   switch (color) {
-    case RunColor.GREEN:
+    case RunColorName.GREEN:
       return RunColorValue.GREEN
-    case RunColor.BLUE:
+    case RunColorName.BLUE:
       return RunColorValue.BLUE
-    case RunColor.RED:
+    case RunColorName.RED:
       return RunColorValue.RED
-    case RunColor.BLACK:
+    case RunColorName.BLACK:
       return RunColorValue.BLACK
-    case RunColor.ORANGE:
+    case RunColorName.ORANGE:
       return RunColorValue.ORANGE
-    case RunColor.GREY:
+    case RunColorName.GREY:
       return RunColorValue.GREY
     default:
       throw 'invalid color'
   }
 }
 
-export function getRunColor(
+export function getRunColorName(
   convention: RunDifficultyConvention,
   difficulty: RunDifficulty | null,
-): RunColor {
+): RunColorName {
   switch (convention) {
     case RunDifficultyConvention.EUROPE:
       switch (difficulty) {
         case RunDifficulty.NOVICE:
-          return RunColor.GREEN
+          return RunColorName.GREEN
         case RunDifficulty.EASY:
-          return RunColor.BLUE
+          return RunColorName.BLUE
         case RunDifficulty.INTERMEDIATE:
-          return RunColor.RED
+          return RunColorName.RED
         case RunDifficulty.ADVANCED:
         case RunDifficulty.EXPERT:
-          return RunColor.BLACK
+          return RunColorName.BLACK
         case RunDifficulty.FREERIDE:
         case RunDifficulty.EXTREME:
-          return RunColor.ORANGE
+          return RunColorName.ORANGE
         default:
-          return RunColor.GREY
+          return RunColorName.GREY
       }
     case RunDifficultyConvention.JAPAN:
       switch (difficulty) {
         case RunDifficulty.NOVICE:
         case RunDifficulty.EASY:
-          return RunColor.GREEN
+          return RunColorName.GREEN
         case RunDifficulty.INTERMEDIATE:
-          return RunColor.RED
+          return RunColorName.RED
         case RunDifficulty.ADVANCED:
         case RunDifficulty.EXPERT:
-          return RunColor.BLACK
+          return RunColorName.BLACK
         case RunDifficulty.FREERIDE:
         case RunDifficulty.EXTREME:
-          return RunColor.ORANGE
+          return RunColorName.ORANGE
         default:
-          return RunColor.GREY
+          return RunColorName.GREY
       }
     case RunDifficultyConvention.NORTH_AMERICA:
       switch (difficulty) {
         case RunDifficulty.NOVICE:
         case RunDifficulty.EASY:
-          return RunColor.GREEN
+          return RunColorName.GREEN
         case RunDifficulty.INTERMEDIATE:
-          return RunColor.BLUE
+          return RunColorName.BLUE
         case RunDifficulty.ADVANCED:
         case RunDifficulty.EXPERT:
-          return RunColor.BLACK
+          return RunColorName.BLACK
         case RunDifficulty.FREERIDE:
         case RunDifficulty.EXTREME:
-          return RunColor.ORANGE
+          return RunColorName.ORANGE
         default:
-          return RunColor.GREY
+          return RunColorName.GREY
       }
     default:
       return exhaustiveMatchingGuard(convention)
