@@ -3,7 +3,7 @@ export enum SourceType {
   OPENSTREETMAP = 'openstreetmap',
 }
 
-export default interface Source {
+export type Source = {
   type: SourceType
   id: string
 }

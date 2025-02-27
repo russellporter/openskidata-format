@@ -1,15 +1,55 @@
 import * as GeoJSON from 'geojson'
 import { ElevationProfile } from './ElevationProfile'
 import { FeatureType } from './FeatureType'
-import { Location } from './Location'
-import { SkiAreaFeature } from './SkiArea'
-import Source from './Source'
+import { SkiAreaSummaryFeature } from './SkiArea'
+import { Source } from './Source'
 import { Status } from './Status'
+import { exhaustiveMatchingGuard } from './util/exhaustiveMatchingGuard'
 
 export type RunGeometry = GeoJSON.LineString | GeoJSON.Polygon
 
+/**
+ * Represents a segment of a ski run/trail.
+ *
+ * Runs are derived from OpenStreetMap pistes, which are defined as all ways/areas/relations containing a "piste:type" tag.
+ * Piste relations support is limited, it is only used to enhance the data of its member ways. There is no way to access the relation itself in the output data.
+ *
+ * A single run as marked on the mountain may be broken up into several run features, especially if the run has branches, or changes in tags (e.g. difficulty, use).
+ *
+ * In the future, there might be a "Route" entity introduced to represent a whole run, which would be composed of multiple run features.
+ *
+ * Note: winter hiking trails and trails of other winter sports disciplines are also included in this dataset.
+ *
+ * In postprocessing:
+ * - overlapping ways are merged into a single run feature with multiple uses.
+ * - connected run segments with the same properties are merged into a single run feature.
+ */
 export type RunFeature = GeoJSON.Feature<RunGeometry, RunProperties>
 
+/**
+ * Represents the properties of a ski run.
+ *
+ * Properties:
+ * @property {FeatureType.Run} type - The feature type, which is always 'Run'.
+ * @property {RunUse[]} uses - Use types for the run (e.g. downhill, nordic), derived from OpenStreetMap "piste:type" tags.
+ * @property {string} id - Unique identifier for the run. The ID is just a hash of the feature, so will change if the feature changes in any way.
+ * @property {string | null} name - Name of the run, if available
+ * @property {string | null} ref - Reference code/number for the run. Derived from the OpenStreetMap piste:ref and ref tags.
+ * @property {Status} status - Operational status. Note: as only operational runs are included in this dataset, this will always be 'operating'.
+ * @property {string | null} description - Description of the run, derived from the OpenStreetMap "piste:description" or "description" tag.
+ * @property {RunDifficulty | null} difficulty - Difficulty rating of the run, derived from the OpenStreetMap "piste:difficulty" tag
+ * @property {RunDifficultyConvention} difficultyConvention - Regional convention used for representing run difficulty. Derived from location.
+ * @property {boolean | null} oneway - Whether the run is one-way only, derived from the OpenStreetMap "piste:oneway" or "oneway" tag, in addition to defaults based on run use.
+ * @property {boolean | null} lit - Whether the run has lighting for night skiing, derived from the OpenStreetMap "piste:lit" or "lit" tag.
+ * @property {boolean | null} gladed - Whether the run is through gladed/tree terrain, derived from the OpenStreetMap "piste:gladed" or "gladed" tag.
+ * @property {boolean | null} patrolled - Whether the run is patrolled by ski patrol, derived from the OpenStreetMap "piste:patrolled" or "patrolled" tag.
+ * @property {RunGrooming | null} grooming - Grooming status/type of the run, derived from the OpenStreetMap "piste:grooming" tag. If not specified explicitly, for difficulties "expert", "freeride", and "extreme", grooming is assumed to be "backcountry".
+ * @property {SkiAreaSummaryFeature[]} skiAreas - Ski areas this run belongs to. Derived from the OpenStreetMap site=piste relation or landuse=winter_sports area and proximity to ski area features. Runs with "backcountry" grooming are not associated with ski areas unless they have a "piste:patrolled=yes" or "patrolled=yes" OpenStreetMap tag, or are part of a "site=piste" ski area relation.
+ * @property {ElevationProfile | null} elevationProfile - Elevation profile of the run, only available for runs with LineString geometry.
+ * @property {Source[]} sources - Data sources for this run's information
+ * @property {string[]} websites - Websites associated with this run, derived from the OpenStreetMap website tag
+ * @property {string | null} wikidata_id - Wikidata identifier, if available, derived from the OpenStreetMap wikidata tag
+ */
 export type RunProperties = {
   type: FeatureType.Run
   uses: RunUse[]
@@ -19,18 +59,15 @@ export type RunProperties = {
   status: Status
   description: string | null
   difficulty: RunDifficulty | null
-  convention: RunConvention
+  difficultyConvention: RunDifficultyConvention
   oneway: boolean | null
   lit: boolean | null
   gladed: boolean | null
   patrolled: boolean | null
-  color: string
-  colorName: ColorName
   grooming: RunGrooming | null
-  skiAreas: SkiAreaFeature[]
+  skiAreas: SkiAreaSummaryFeature[]
   elevationProfile: ElevationProfile | null
   sources: Source[]
-  location: Location | null
   websites: string[]
   wikidata_id: string | null
 }
@@ -68,7 +105,7 @@ export enum RunDifficulty {
   EXTREME = 'extreme',
 }
 
-export enum ColorName {
+export enum RunColor {
   GREEN = 'green',
   BLUE = 'blue',
   RED = 'red',
@@ -77,92 +114,123 @@ export enum ColorName {
   GREY = 'grey',
 }
 
-export enum RunConvention {
+export enum RunColorValue {
+  GREEN = 'hsl(125, 100%, 33%)',
+  BLUE = 'hsl(208, 100%, 33%)',
+  RED = 'hsl(359, 94%, 53%)',
+  BLACK = 'hsl(0, 0%, 0%)',
+  ORANGE = 'hsl(34, 100%, 50%)',
+  GREY = 'hsl(0, 0%, 35%)',
+}
+
+/**
+ * Run difficulty colors vary by region. This enum defines the color convention used for runs at a ski area.
+ * @enum {string}
+ */
+export enum RunDifficultyConvention {
+  /**
+   * European color convention:
+   * - Green: Novice
+   * - Blue: Easy
+   * - Red: Intermediate
+   * - Black: Advanced/Expert
+   * - Orange: Freeride/Extreme
+   */
   EUROPE = 'europe',
+
+  /**
+   * Japanese color convention:
+   * - Green: Novice/Easy
+   * - Red: Intermediate
+   * - Black: Advanced/Expert
+   * - Orange: Freeride/Extreme
+   */
   JAPAN = 'japan',
+
+  /**
+   * North American color convention:
+   * - Green: Novice/Easy
+   * - Blue: Intermediate
+   * - Black: Advanced/Expert
+   * - Orange: Freeride/Extreme
+   */
   NORTH_AMERICA = 'north_america',
 }
 
-// When adding a new color, add a supplemental oneway icon on the map style
-const GREEN_COLOR = 'hsl(125, 100%, 33%)'
-const BLUE_COLOR = 'hsl(208, 100%, 33%)'
-const RED_COLOR = 'hsl(359, 94%, 53%)'
-const BLACK_COLOR = 'hsl(0, 0%, 0%)'
-const ORANGE_COLOR = 'hsl(34, 100%, 50%)'
-const GREY_COLOR = 'hsl(0, 0%, 35%)'
-
-export function getColorName(color: string): ColorName {
+export function getColorValue(color: RunColor): RunColorValue {
   switch (color) {
-    case GREEN_COLOR:
-      return ColorName.GREEN
-    case BLUE_COLOR:
-      return ColorName.BLUE
-    case RED_COLOR:
-      return ColorName.RED
-    case BLACK_COLOR:
-      return ColorName.BLACK
-    case ORANGE_COLOR:
-      return ColorName.ORANGE
-    case GREY_COLOR:
-      return ColorName.GREY
+    case RunColor.GREEN:
+      return RunColorValue.GREEN
+    case RunColor.BLUE:
+      return RunColorValue.BLUE
+    case RunColor.RED:
+      return RunColorValue.RED
+    case RunColor.BLACK:
+      return RunColorValue.BLACK
+    case RunColor.ORANGE:
+      return RunColorValue.ORANGE
+    case RunColor.GREY:
+      return RunColorValue.GREY
     default:
-      throw 'missing color'
+      throw 'invalid color'
   }
 }
 
 export function getRunColor(
-  convention: RunConvention,
+  convention: RunDifficultyConvention,
   difficulty: RunDifficulty | null,
-): string {
+): RunColor {
   switch (convention) {
-    case RunConvention.EUROPE:
+    case RunDifficultyConvention.EUROPE:
       switch (difficulty) {
         case RunDifficulty.NOVICE:
-          return GREEN_COLOR
+          return RunColor.GREEN
         case RunDifficulty.EASY:
-          return BLUE_COLOR
+          return RunColor.BLUE
         case RunDifficulty.INTERMEDIATE:
-          return RED_COLOR
+          return RunColor.RED
         case RunDifficulty.ADVANCED:
         case RunDifficulty.EXPERT:
-          return BLACK_COLOR
+          return RunColor.BLACK
         case RunDifficulty.FREERIDE:
         case RunDifficulty.EXTREME:
-          return ORANGE_COLOR
+          return RunColor.ORANGE
         default:
-          return GREY_COLOR
+          return RunColor.GREY
       }
-    case RunConvention.JAPAN:
-      switch (difficulty) {
-        case RunDifficulty.NOVICE:
-        case RunDifficulty.EASY:
-          return GREEN_COLOR
-        case RunDifficulty.INTERMEDIATE:
-          return RED_COLOR
-        case RunDifficulty.ADVANCED:
-        case RunDifficulty.EXPERT:
-          return BLACK_COLOR
-        case RunDifficulty.FREERIDE:
-        case RunDifficulty.EXTREME:
-          return ORANGE_COLOR
-        default:
-          return GREY_COLOR
-      }
-    case RunConvention.NORTH_AMERICA:
+    case RunDifficultyConvention.JAPAN:
       switch (difficulty) {
         case RunDifficulty.NOVICE:
         case RunDifficulty.EASY:
-          return GREEN_COLOR
+          return RunColor.GREEN
         case RunDifficulty.INTERMEDIATE:
-          return BLUE_COLOR
+          return RunColor.RED
         case RunDifficulty.ADVANCED:
         case RunDifficulty.EXPERT:
-          return BLACK_COLOR
+          return RunColor.BLACK
         case RunDifficulty.FREERIDE:
         case RunDifficulty.EXTREME:
-          return ORANGE_COLOR
+          return RunColor.ORANGE
         default:
-          return GREY_COLOR
+          return RunColor.GREY
       }
+    case RunDifficultyConvention.NORTH_AMERICA:
+      switch (difficulty) {
+        case RunDifficulty.NOVICE:
+        case RunDifficulty.EASY:
+          return RunColor.GREEN
+        case RunDifficulty.INTERMEDIATE:
+          return RunColor.BLUE
+        case RunDifficulty.ADVANCED:
+        case RunDifficulty.EXPERT:
+          return RunColor.BLACK
+        case RunDifficulty.FREERIDE:
+        case RunDifficulty.EXTREME:
+          return RunColor.ORANGE
+        default:
+          return RunColor.GREY
+      }
+    default:
+      return exhaustiveMatchingGuard(convention)
   }
 }

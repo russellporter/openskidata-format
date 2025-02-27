@@ -1,7 +1,8 @@
-import { Location, SkiAreaFeature } from '.'
 import { FeatureType } from './FeatureType'
-import Source from './Source'
+import { SkiAreaSummaryFeature } from './SkiArea'
+import { Source } from './Source'
 import { Status } from './Status'
+import { exhaustiveMatchingGuard } from './util/exhaustiveMatchingGuard'
 
 export type LiftFeature = GeoJSON.Feature<LiftGeometry, LiftProperties>
 
@@ -13,12 +14,41 @@ export type LiftGeometry =
   | GeoJSON.Polygon
   | GeoJSON.MultiPolygon
 
+/**
+ * A feature representing a ski lift.
+ *
+ * Lifts are derived from OpenStreetMap aerialway/railway features that are commonly used for winter sports.
+ *
+ * Note:
+ * - Private lifts are not included in this dataset.
+ * - Rack railways are included only if they are part of a site=piste relation.
+ * - Some lifts included in the dataset may be for other purposes (amusement parks, etc).
+ *
+ * Properties:
+ * @property {FeatureType.Lift} type - The feature type, which is always 'Lift'.
+ * @property {string} id - Unique identifier for the lift. The ID is just a hash of the feature, so will change if the feature changes in any way.
+ * @property {LiftType} liftType - Type of lift (e.g. chair_lift, gondola). Derived from OpenStreetMap aerialway/railway tags.
+ * @property {Status} status - Operational status of the lift. Derived from OpenStreetMap lifecycle tags.
+ * @property {string | null} name - Name of the lift. Derived from the OpenStreetMap name tag.
+ * @property {string | null} ref - Reference code/number for the lift. Derived from the OpenStreetMap ref tag.
+ * @property {string | null} description - Description of the lift. Derived from the OpenStreetMap description tag.
+ * @property {boolean | null} oneway - Whether the lift allows riding only in one direction. Derived from the OpenStreetMap oneway tag.
+ * @property {number | null} occupancy - Number of people each carrier can transport. Derived from the OpenStreetMap aerialway:occupancy tag.
+ * @property {number | null} capacity - Transport capacity in persons/hour. Derived from the OpenStreetMap aerialway:capacity tag.
+ * @property {number | null} duration - Duration of lift ride in seconds. Derived from the OpenStreetMap aerialway:duration tag.
+ * @property {boolean | null} detachable - Whether the lift has detachable grips. Derived from the OpenStreetMap aerialway:detachable tag.
+ * @property {boolean | null} bubble - Whether the lift has bubbles/covers to protect from weather. Derived from the OpenStreetMap aerialway:bubble tag.
+ * @property {boolean | null} heating - Whether the lift has heated carriers/seats. Derived from the OpenStreetMap aerialway:heating tag.
+ * @property {SkiAreaSummaryFeature[]} skiAreas - Ski areas this lift is a part of.
+ * @property {Source[]} sources - Data sources for the feature.
+ * @property {string[]} websites - Websites associated with this lift. Derived from the OpenStreetMap website tag.
+ * @property {string | null} wikidata_id - Wikidata identifier. Derived from the OpenStreetMap wikidata tag.
+ */
 export type LiftProperties = {
   type: FeatureType.Lift
   id: string
   liftType: LiftType
   status: Status
-  color: string
   name: string | null
   ref: string | null
   description: string | null
@@ -26,11 +56,11 @@ export type LiftProperties = {
   occupancy: number | null
   capacity: number | null
   duration: number | null
+  detachable: boolean | null
   bubble: boolean | null
   heating: boolean | null
-  skiAreas: SkiAreaFeature[]
+  skiAreas: SkiAreaSummaryFeature[]
   sources: Source[]
-  location: Location | null
   websites: string[]
   wikidata_id: string | null
 }
@@ -76,5 +106,25 @@ export function getFormattedLiftType(liftType: LiftType): string {
       return 'Funicular'
     case LiftType.RackRailway:
       return 'Rack Railway'
+    default:
+      return exhaustiveMatchingGuard(liftType)
+  }
+}
+
+export function getLiftColor(status: Status): string {
+  const BRIGHT_RED_COLOR = 'hsl(0, 82%, 42%)'
+  const DIM_RED_COLOR = 'hsl(0, 53%, 42%)'
+
+  switch (status) {
+    case Status.Disused:
+    case Status.Abandoned:
+      return DIM_RED_COLOR
+    case Status.Proposed:
+    case Status.Planned:
+    case Status.Construction:
+    case Status.Operating:
+      return BRIGHT_RED_COLOR
+    default:
+      return exhaustiveMatchingGuard(status)
   }
 }

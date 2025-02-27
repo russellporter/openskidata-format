@@ -1,5 +1,4 @@
-import { LiftProperties, LiftType } from '.'
-import { getFormattedLiftType } from './Lift'
+import { LiftProperties, LiftType, getFormattedLiftType } from './Lift'
 
 export function getLiftNameAndType(properties: LiftProperties) {
   const name = properties.name
@@ -7,7 +6,7 @@ export function getLiftNameAndType(properties: LiftProperties) {
   const liftType = getAugmentedLiftType(properties)
 
   if (name && liftType) {
-    return name + ' (' + liftType + ')'
+    return `${name} (${liftType})`
   } else if (name) {
     return name
   } else {
@@ -54,15 +53,11 @@ function getAugmentedLiftType(properties: LiftProperties): string | null {
 }
 
 function formattedDuration(duration: number): string {
-  let minutes: string | number = Math.floor(duration / 60)
-  let seconds: string | number = duration - minutes * 60
-  if (minutes < 10) {
-    minutes = '0' + minutes
-  }
-  if (seconds < 10) {
-    seconds = '0' + seconds
-  }
-  return minutes + ':' + seconds
+  const minutes = Math.floor(duration / 60)
+    .toString()
+    .padStart(2, '0')
+  const seconds = (duration % 60).toString().padStart(2, '0')
+  return `${minutes}:${seconds}`
 }
 
 function implicitOccupancyLiftType(properties: LiftProperties): string | null {
@@ -130,9 +125,7 @@ function containsAny(input: string | null, lowerCaseSearchList: string[]) {
   }
 
   const lowerCaseInput = input.toLowerCase()
-  return (
-    lowerCaseSearchList.findIndex((searchItem) => {
-      return lowerCaseInput.includes(searchItem)
-    }) !== -1
-  )
+  return lowerCaseSearchList.some((searchItem) => {
+    return lowerCaseInput.includes(searchItem)
+  })
 }

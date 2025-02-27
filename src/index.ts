@@ -1,4 +1,3 @@
-export * from './Activity'
 export * from './ElevationProfile'
 export * from './FeatureType'
 export * from './Lift'
