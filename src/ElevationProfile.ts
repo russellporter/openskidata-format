@@ -79,6 +79,7 @@ export function getPitchData(profileGeometry: GeoJSON.LineString): PitchData {
 
   let totalLength = 0
   let totalInclinedLength = 0
+  let totalElevationChange = 0
   let maxUphillPitch = Number.MIN_VALUE
   let maxDownhillPitch = Number.MAX_VALUE
   for (let i = 0; i < coordinates.length - 1; i++) {
@@ -104,15 +105,14 @@ export function getPitchData(profileGeometry: GeoJSON.LineString): PitchData {
     totalInclinedLength += Math.sqrt(
       Math.pow(lengthInMeters, 2) + Math.pow(elevation, 2),
     )
+    totalElevationChange += Math.abs(elevation)
   }
 
   const maxPitch =
     Math.abs(maxUphillPitch) > Math.abs(maxDownhillPitch)
       ? maxUphillPitch
       : maxDownhillPitch
-  const elevationChange =
-    coordinates[coordinates.length - 1][2] - coordinates[0][2]
-  const averagePitch = elevationChange / totalLength
+  const averagePitch = totalElevationChange / totalLength
   return {
     averagePitchInPercent: averagePitch,
     maxPitchInPercent: maxPitch,
