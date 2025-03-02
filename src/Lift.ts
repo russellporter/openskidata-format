@@ -1,3 +1,4 @@
+import { ElevationData, getElevationData } from './ElevationProfile'
 import { FeatureType } from './FeatureType'
 import { SkiAreaSummaryFeature } from './SkiArea'
 import { Source } from './Source'
@@ -78,6 +79,29 @@ export enum LiftType {
   MagicCarpet = 'magic_carpet',
   Funicular = 'funicular',
   RackRailway = 'rack_railway',
+}
+
+export type LiftElevationData = ElevationData & {
+  speedInMetersPerSecond: number | null
+}
+
+export function getLiftElevationData(
+  feature: LiftFeature,
+): LiftElevationData | null {
+  const geometry = feature.geometry
+  if (!geometry || geometry.type !== 'LineString') {
+    return null
+  }
+
+  const elevationData = getElevationData(geometry)
+  const durationInSeconds = feature.properties.duration
+
+  return {
+    ...elevationData,
+    speedInMetersPerSecond: durationInSeconds
+      ? elevationData.inclinedLengthInMeters / durationInSeconds
+      : null,
+  }
 }
 
 export function getFormattedLiftType(liftType: LiftType): string {

@@ -1,13 +1,12 @@
 import {
   extractPointsForElevationProfile,
   getAscentAndDescent,
-  getLiftElevationData,
   getPitchData,
-  getRunElevationData,
 } from './ElevationProfile'
 import { FeatureType } from './FeatureType'
-import { LiftFeature, LiftType } from './Lift'
+import { getLiftElevationData, LiftFeature, LiftType } from './Lift'
 import {
+  getRunElevationData,
   RunDifficulty,
   RunDifficultyConvention,
   RunFeature,

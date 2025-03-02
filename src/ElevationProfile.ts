@@ -1,8 +1,6 @@
 import length from '@turf/length'
 import { lineChunk } from '@turf/line-chunk'
 import { LineString } from 'geojson'
-import { LiftFeature } from './Lift'
-import { RunFeature } from './Run'
 
 /**
  * Represents an elevation profile with height measurements along a LineString.
@@ -30,35 +28,14 @@ type AscentDescentData = {
   descentInMeters: number
   minElevationInMeters: number
   maxElevationInMeters: number
+  verticalInMeters: number
 }
 
 type PitchData = {
   averagePitchInPercent: number
   maxPitchInPercent: number
   inclinedLengthInMeters: number
-}
-
-export function getRunElevationData(feature: RunFeature): ElevationData | null {
-  const geometry = feature.geometry
-  const profile = feature.properties.elevationProfile
-  if (!profile || !geometry || geometry.type !== 'LineString') {
-    return null
-  }
-
-  // Get a geometry that includes elevation data at an even spacing along the run
-  const profileGeometry = getProfileGeometry(geometry, profile)
-  return getElevationData(profileGeometry)
-}
-
-export function getLiftElevationData(
-  feature: LiftFeature,
-): ElevationData | null {
-  const geometry = feature.geometry
-  if (!geometry || geometry.type !== 'LineString') {
-    return null
-  }
-
-  return getElevationData(geometry)
+  overallPitchInPercent: number
 }
 
 export function getElevationData(
@@ -113,14 +90,18 @@ export function getPitchData(profileGeometry: GeoJSON.LineString): PitchData {
       ? maxUphillPitch
       : maxDownhillPitch
   const averagePitch = totalElevationChange / totalLength
+  const overallElevationChange = Math.abs(
+    coordinates[coordinates.length - 1][2] - coordinates[0][2],
+  )
   return {
     averagePitchInPercent: averagePitch,
     maxPitchInPercent: maxPitch,
     inclinedLengthInMeters: totalInclinedLength,
+    overallPitchInPercent: overallElevationChange / totalLength,
   }
 }
 
-function getProfileGeometry(
+export function getProfileGeometry(
   geometry: GeoJSON.LineString,
   elevationProfile: ElevationProfile,
 ): GeoJSON.LineString {
@@ -223,5 +204,6 @@ export function getAscentAndDescent(
     descentInMeters: result.descent,
     minElevationInMeters: result.minElevation,
     maxElevationInMeters: result.maxElevation,
+    verticalInMeters: result.maxElevation - result.minElevation,
   }
 }

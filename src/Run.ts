@@ -1,5 +1,10 @@
 import * as GeoJSON from 'geojson'
-import { ElevationProfile } from './ElevationProfile'
+import {
+  ElevationData,
+  ElevationProfile,
+  getElevationData,
+  getProfileGeometry,
+} from './ElevationProfile'
 import { FeatureType } from './FeatureType'
 import { SkiAreaSummaryFeature } from './SkiArea'
 import { Source } from './Source'
@@ -155,6 +160,18 @@ export enum RunDifficultyConvention {
    * - Orange: Freeride/Extreme
    */
   NORTH_AMERICA = 'north_america',
+}
+
+export function getRunElevationData(feature: RunFeature): ElevationData | null {
+  const geometry = feature.geometry
+  const profile = feature.properties.elevationProfile
+  if (!profile || !geometry || geometry.type !== 'LineString') {
+    return null
+  }
+
+  // Get a geometry that includes elevation data at an even spacing along the run
+  const profileGeometry = getProfileGeometry(geometry, profile)
+  return getElevationData(profileGeometry)
 }
 
 export function getRunColor(
