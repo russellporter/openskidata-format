@@ -89,7 +89,11 @@ export function getLiftElevationData(
   feature: LiftFeature,
 ): LiftElevationData | null {
   const geometry = feature.geometry
-  if (!geometry || geometry.type !== 'LineString') {
+  if (
+    !geometry ||
+    geometry.type !== 'LineString' ||
+    geometry.coordinates[0].length < 3
+  ) {
     return null
   }
 
