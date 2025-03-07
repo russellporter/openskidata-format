@@ -22,7 +22,8 @@ export type LiftGeometry =
  *
  * Note:
  * - Private lifts are not included in this dataset.
- * - Rack railways are included only if they are part of a site=piste relation.
+ * - Railways (except funiculars) are included only if they are part of a site=piste relation.
+ * - Railway parts are not merged together so a single railway line may be represented as multiple features.
  * - Some lifts included in the dataset may be for other purposes (amusement parks, etc).
  *
  * Properties:
