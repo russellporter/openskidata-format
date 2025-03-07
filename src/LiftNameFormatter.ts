@@ -42,22 +42,7 @@ function getAugmentedLiftType(properties: LiftProperties): string | null {
     components.push(liftType)
   }
 
-  if (properties.duration !== null) {
-    if (components.length > 0) {
-      components.push('-')
-    }
-    components.push(formattedDuration(properties.duration))
-  }
-
   return components.join(' ')
-}
-
-function formattedDuration(duration: number): string {
-  const minutes = Math.floor(duration / 60)
-    .toString()
-    .padStart(2, '0')
-  const seconds = (duration % 60).toString().padStart(2, '0')
-  return `${minutes}:${seconds}`
 }
 
 function implicitOccupancyLiftType(properties: LiftProperties): string | null {
