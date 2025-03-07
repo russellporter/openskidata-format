@@ -84,6 +84,7 @@ export enum LiftType {
 
 export type LiftElevationData = ElevationData & {
   speedInMetersPerSecond: number | null
+  verticalSpeedInMetersPerSecond: number | null
 }
 
 export function getLiftElevationData(
@@ -105,6 +106,9 @@ export function getLiftElevationData(
     ...elevationData,
     speedInMetersPerSecond: durationInSeconds
       ? elevationData.inclinedLengthInMeters / durationInSeconds
+      : null,
+    verticalSpeedInMetersPerSecond: durationInSeconds
+      ? elevationData.verticalInMeters / durationInSeconds
       : null,
   }
 }
