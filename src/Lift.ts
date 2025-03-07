@@ -78,7 +78,7 @@ export enum LiftType {
   RopeTow = 'rope_tow',
   MagicCarpet = 'magic_carpet',
   Funicular = 'funicular',
-  RackRailway = 'rack_railway',
+  Railway = 'railway',
 }
 
 export type LiftElevationData = ElevationData & {
@@ -132,8 +132,8 @@ export function getFormattedLiftType(liftType: LiftType): string {
       return 'Magic Carpet'
     case LiftType.Funicular:
       return 'Funicular'
-    case LiftType.RackRailway:
-      return 'Rack Railway'
+    case LiftType.Railway:
+      return 'Railway'
     default:
       return exhaustiveMatchingGuard(liftType)
   }

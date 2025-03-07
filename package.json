@@ -1,6 +1,6 @@
 {
   "name": "openskidata-format",
-  "version": "2.2.1",
+  "version": "3.0.0",
   "description": "Data format for OpenSkiMap.org",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
