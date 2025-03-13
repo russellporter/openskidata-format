@@ -105,20 +105,45 @@ export function getProfileGeometry(
   geometry: GeoJSON.LineString,
   elevationProfile: ElevationProfile,
 ): GeoJSON.LineString {
-  const points = extractPointsForElevationProfile(
+  const geometries = lineChunksForElevationProfile(
     geometry,
     elevationProfile.resolution,
-  ).coordinates
-  const heights = elevationProfile.heights
-  if (points.length !== heights.length) {
-    throw 'Mismatch of points & elevation profile.'
+  )
+  var index = 0
+  for (let subline of geometries) {
+    const firstPoint = subline.coordinates[0]
+    if (firstPoint.length === 2) {
+      firstPoint.push(elevationProfile.heights[index])
+    }
+
+    index++
+
+    if (index === elevationProfile.heights.length) {
+      throw 'Mismatch of points & elevation profile.'
+    }
+
+    const lastPoint = subline.coordinates[subline.coordinates.length - 1]
+    if (lastPoint.length === 2) {
+      lastPoint.push(elevationProfile.heights[index])
+    }
+  }
+
+  if (index !== elevationProfile.heights.length - 1) {
+    throw `Mismatch of points & elevation profile`
+  }
+
+  // Check all coordinates have a height
+  for (let subline of geometries) {
+    for (let point of subline.coordinates) {
+      if (point.length < 3) {
+        throw 'All points should have an elevation at this point.'
+      }
+    }
   }
 
   return {
     type: 'LineString',
-    coordinates: points.map((point, index) => {
-      return [point[0], point[1], heights[index]]
-    }),
+    coordinates: geometries.flatMap((geometry) => geometry.coordinates),
   }
 }
 
@@ -129,25 +154,18 @@ export function extractPointsForElevationProfile(
   geometry: LineString,
   resolution: number,
 ): GeoJSON.LineString {
-  const subfeatures = lineChunk(geometry, resolution, {
-    units: 'meters',
-  }).features
+  const geometries = lineChunksForElevationProfile(geometry, resolution)
   const points: GeoJSON.Position[] = []
-  for (let subline of subfeatures) {
-    const geometry = subline.geometry
-    if (geometry) {
-      const point = geometry.coordinates[0]
-      points.push([point[0], point[1]])
-    }
+  for (let subline of geometries) {
+    const point = subline.coordinates[0]
+    points.push([point[0], point[1]])
   }
-  if (subfeatures.length > 0) {
-    const geometry = subfeatures[subfeatures.length - 1].geometry
-    if (geometry) {
-      const coords = geometry.coordinates
-      if (coords.length > 1) {
-        const point = coords[coords.length - 1]
-        points.push([point[0], point[1]])
-      }
+  if (geometries.length > 0) {
+    const geometry = geometries[geometries.length - 1]
+    const coords = geometry.coordinates
+    if (coords.length > 1) {
+      const point = coords[coords.length - 1]
+      points.push([point[0], point[1]])
     }
   }
 
@@ -155,6 +173,15 @@ export function extractPointsForElevationProfile(
     type: 'LineString',
     coordinates: points,
   }
+}
+
+function lineChunksForElevationProfile(
+  geometry: LineString,
+  resolution: number,
+): GeoJSON.LineString[] {
+  return lineChunk(geometry, resolution, {
+    units: 'meters',
+  }).features.map((feature) => feature.geometry)
 }
 
 export function getAscentAndDescent(

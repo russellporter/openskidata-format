@@ -4,4 +4,4 @@ module.exports = {
   testEnvironment: 'node',
   testMatch: ['**/*.test.ts?(x)'],
   collectCoverageFrom: ['src/**/*.ts', '!src/**/*.d.ts'],
-};
+}

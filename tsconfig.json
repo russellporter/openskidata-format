@@ -7,14 +7,12 @@
     "esModuleInterop": true,
     "importHelpers": true,
     "target": "es2020",
-    "lib": ["es2020"],
+    "lib": ["es2020", "dom"],
     "types": ["jest"],
     "typeRoots": ["./node_modules/@types"],
     "rootDir": "./src/",
     "outDir": "./dist",
     "declaration": true
   },
-  "exclude": [
-    "**/*.test.ts"
-  ]
+  "exclude": ["**/*.test.ts"]
 }
