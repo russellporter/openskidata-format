@@ -7,8 +7,8 @@ import { Status } from './Status'
 
 /**
  * A ski area feature is derived from several sources:
- * - OpenStreetMap site=piste relations
- * - OpenStreetMap landuse=winter_sports areas that contains ski runs
+ * - OpenStreetMap site=piste relations (must contain at least one lift or run of any kind)
+ * - OpenStreetMap landuse=winter_sports areas (must contain at least one downhill/nordic (non-backcountry) run or operational lift)
  * - Skimap.org ski areas
  *
  * The processor attempts to merge the data of all sources to create a single ski area feature.
