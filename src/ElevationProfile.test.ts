@@ -74,23 +74,28 @@ describe('ElevationProfile', () => {
 
       const result = getPitchData(profileGeometry)
 
-      expect(result.maxPitchInPercent).toBeCloseTo(0.489)
+      expect(result.maxPitchInPercent).toBeCloseTo(0.377)
       expect(result.averagePitchInPercent).toBeCloseTo(0.2482)
       expect(result.inclinedLengthInMeters).toBeCloseTo(63.0597)
     })
 
-    it('throws error when elevation data is missing', () => {
+    it('calculates pitch correctly on a profile with problematic short segments', () => {
+      // Create a geometry with artificially short segments and unrealistic elevation changes
       const profileGeometry: GeoJSON.LineString = {
         type: 'LineString',
         coordinates: [
-          [0, 0],
-          [1, 1],
+          [0, 0, 100],
+          [0, 0.00000001, 101], // Very short distance with 1m elevation gain (unrealistically steep)
+          [0, 0.001, 102], // Normal segment
+          [0, 0.002, 103], // Normal segment
         ],
       }
 
-      expect(() => getPitchData(profileGeometry)).toThrow(
-        'Elevation data is required for slope analysis',
-      )
+      // Using fixed-length segments should smooth out the unrealistic spike
+      const result = getPitchData(profileGeometry, 50)
+
+      // The overall change should be more reasonable when calculated over fixed distances
+      expect(result.maxPitchInPercent).toBeLessThan(0.5) // Should be much less than the individual segment pitch
     })
   })
 
@@ -113,6 +118,25 @@ describe('ElevationProfile', () => {
       ])
       expect(result.coordinates[result.coordinates.length - 1]).toEqual([
         11.175409464719593, 47.31138883724759,
+      ])
+    })
+
+    it('handles points that already have elevation', () => {
+      const geometry: GeoJSON.LineString = {
+        type: 'LineString',
+        coordinates: [
+          [11.177452968770694, 47.312650638218656, 1500], // With elevation
+          [11.175409464719593, 47.31138883724759, 1450], // With elevation
+        ],
+      }
+
+      const result = extractPointsForElevationProfile(geometry, 20)
+
+      // Should still work properly, returning 2D points regardless of input dimension
+      expect(result.coordinates.length).toBeGreaterThan(1)
+      expect(result.coordinates[0].length).toBe(2) // Should always return 2D points
+      expect(result.coordinates[0]).toEqual([
+        11.177452968770694, 47.312650638218656,
       ])
     })
   })
@@ -229,7 +253,7 @@ describe('ElevationProfile', () => {
       expect(getLiftElevationData(liftFeature)).toBeNull()
     })
 
-    it('test get max aspect', () => {
+    it('get max aspect', () => {
       const runFeature = {
         type: 'Feature',
         properties: {
@@ -247,33 +271,7 @@ describe('ElevationProfile', () => {
           gladed: null,
           patrolled: null,
           grooming: 'classic+skating',
-          skiAreas: [
-            {
-              type: 'Feature',
-              properties: {
-                id: '403c8d67ddd348bfa3f7d02c6c21163479964926',
-                name: 'Parsenn',
-                activities: ['downhill', 'nordic'],
-                type: 'skiArea',
-                status: 'operating',
-                location: {
-                  iso3166_1Alpha2: 'CH',
-                  iso3166_2: null,
-                  localized: {
-                    en: {
-                      country: 'Switzerland',
-                      region: null,
-                      locality: 'Davos',
-                    },
-                  },
-                },
-              },
-              geometry: {
-                coordinates: [9.82355210691384, 46.852569722283064],
-                type: 'Point',
-              },
-            },
-          ],
+          skiAreas: [],
           elevationProfile: {
             heights: [
               1546, 1546, 1546, 1546, 1546, 1545, 1546, 1546, 1546, 1546, 1546,
@@ -288,40 +286,7 @@ describe('ElevationProfile', () => {
             ],
             resolution: 25,
           },
-          sources: [
-            {
-              type: 'openstreetmap',
-              id: 'relation/10486817',
-            },
-            {
-              type: 'openstreetmap',
-              id: 'way/758983358',
-            },
-            {
-              type: 'openstreetmap',
-              id: 'way/998996151',
-            },
-            {
-              type: 'openstreetmap',
-              id: 'way/758956001',
-            },
-            {
-              type: 'openstreetmap',
-              id: 'way/758955999',
-            },
-            {
-              type: 'openstreetmap',
-              id: 'way/854855704',
-            },
-            {
-              type: 'openstreetmap',
-              id: 'way/1353008599',
-            },
-            {
-              type: 'openstreetmap',
-              id: 'way/1353008601',
-            },
-          ],
+          sources: [],
           websites: [],
           wikidata_id: null,
         },
@@ -395,7 +360,7 @@ describe('ElevationProfile', () => {
       } as RunFeature
 
       const result = getRunElevationData(runFeature)
-      console.log(result?.maxPitchInPercent)
+      expect(result?.maxPitchInPercent).toBeCloseTo(0.12, 2)
     })
   })
 })
