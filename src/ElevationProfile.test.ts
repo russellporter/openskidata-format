@@ -225,8 +225,8 @@ describe('ElevationProfile', () => {
       const liftFeature: LiftFeature = {
         type: 'Feature',
         geometry: {
-          type: 'Point',
-          coordinates: [0, 0, 100],
+          type: 'MultiLineString',
+          coordinates: [[[0, 0, 100], [1, 1, 200]]],
         },
         properties: {
           type: FeatureType.Lift,
