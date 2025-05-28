@@ -7,13 +7,7 @@ import { exhaustiveMatchingGuard } from './util/exhaustiveMatchingGuard'
 
 export type LiftFeature = GeoJSON.Feature<LiftGeometry, LiftProperties>
 
-export type LiftGeometry =
-  | GeoJSON.Point
-  | GeoJSON.MultiPoint
-  | GeoJSON.LineString
-  | GeoJSON.MultiLineString
-  | GeoJSON.Polygon
-  | GeoJSON.MultiPolygon
+export type LiftGeometry = GeoJSON.LineString | GeoJSON.MultiLineString
 
 /**
  * A feature representing a ski lift.
