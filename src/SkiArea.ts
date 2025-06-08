@@ -2,6 +2,7 @@ import { FeatureType } from './FeatureType'
 import { LiftType } from './Lift'
 import { Location } from './Location'
 import { RunDifficulty, RunDifficultyConvention } from './Run'
+import { SnowCoverHistory } from './SnowCoverHistory'
 import { Source } from './Source'
 import { Status } from './Status'
 
@@ -76,6 +77,15 @@ export type SkiAreaStatistics = {
   lifts: LiftStatistics
   minElevation?: number
   maxElevation?: number
+  snowCover?: SkiAreaSnowCoverStatistics
+}
+
+/**
+ * Aggregated snow cover data for a ski area's runs.
+ */
+export type SkiAreaSnowCoverStatistics = {
+  overall: SnowCoverHistory
+  byActivity: { [key in SkiAreaActivity | 'other']?: SnowCoverHistory }
 }
 
 export type RunStatistics = {
