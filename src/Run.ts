@@ -7,6 +7,7 @@ import {
 } from './ElevationProfile'
 import { FeatureType } from './FeatureType'
 import { SkiAreaSummaryFeature } from './SkiArea'
+import { SnowCoverHistory } from './SnowCoverHistory'
 import { Source } from './Source'
 import { Status } from './Status'
 import { exhaustiveMatchingGuard } from './util/exhaustiveMatchingGuard'
@@ -54,6 +55,7 @@ export type RunFeature = GeoJSON.Feature<RunGeometry, RunProperties>
  * @property {Source[]} sources - Data sources for this run's information
  * @property {string[]} websites - Websites associated with this run, derived from the OpenStreetMap website tag
  * @property {string | null} wikidata_id - Wikidata identifier, if available, derived from the OpenStreetMap wikidata tag
+ * @property {SnowCoverHistory} [snowCoverHistory] - Historical snow cover data for this run, if available
  */
 export type RunProperties = {
   type: FeatureType.Run
@@ -75,6 +77,7 @@ export type RunProperties = {
   sources: Source[]
   websites: string[]
   wikidata_id: string | null
+  snowCoverHistory?: SnowCoverHistory
 }
 
 export enum RunUse {
