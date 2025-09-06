@@ -1,4 +1,5 @@
 import { RunDifficulty, RunFeature, RunUse } from "./Run";
+import { RunDifficultyConvention } from "./RunDifficultyConvention";
 
 /**
  * Represents a slope grading scale with steepness thresholds for different run types.
@@ -19,27 +20,14 @@ export type SlopeGradingScale = {
  * @returns The appropriate slope grading scale with steepness thresholds
  */
 export function getSlopeGradingScale(feature: RunFeature): SlopeGradingScale {
+  // Check for downhill or skitour uses first (they have the same scale)
   if (
     feature.properties.uses.includes(RunUse.Downhill) ||
     feature.properties.uses.includes(RunUse.Skitour)
   ) {
-    return {
-      stops: [
-        { maxSteepness: 0.05, difficulty: null }, // No difficulty below 5%
-        { maxSteepness: 0.25, difficulty: RunDifficulty.EASY },
-        { maxSteepness: 0.4, difficulty: RunDifficulty.INTERMEDIATE },
-        { maxSteepness: 0.8, difficulty: RunDifficulty.ADVANCED }, // Advanced up to 80%
-        { maxSteepness: 1.2, difficulty: RunDifficulty.EXPERT }, // Expert up to 120%
-      ],
-    };
+    return getSlopeGradingScaleForUse(RunUse.Downhill, feature.properties.difficultyConvention);
   } else if (feature.properties.uses.includes(RunUse.Nordic)) {
-    return {
-      stops: [
-        { maxSteepness: 0.1, difficulty: RunDifficulty.EASY },
-        { maxSteepness: 0.15, difficulty: RunDifficulty.INTERMEDIATE },
-        { maxSteepness: 0.3, difficulty: RunDifficulty.ADVANCED },
-      ],
-    };
+    return getSlopeGradingScaleForUse(RunUse.Nordic, feature.properties.difficultyConvention);
   } else {
     return { stops: [] };
   }
@@ -63,4 +51,44 @@ export function getEstimatedRunDifficulty(
     scale.stops.find((stop) => stop.maxSteepness > absoluteSteepness)
       ?.difficulty || null
   );
+}
+
+/**
+ * Gets the appropriate slope grading scale for a specific run use and region.
+ * Different run uses (downhill, nordic, etc.) have different steepness thresholds
+ * for difficulty classification. This function allows for regional variations
+ * in the future if different conventions use different slope scales.
+ * 
+ * @param runUse - The type of run use to get the grading scale for
+ * @param convention - The regional difficulty convention (currently not used but available for future regional variations)
+ * @returns The appropriate slope grading scale with steepness thresholds
+ */
+export function getSlopeGradingScaleForUse(
+  runUse: RunUse,
+  convention: RunDifficultyConvention
+): SlopeGradingScale {
+  // Currently convention is not used, but is available for future regional variations
+  switch (runUse) {
+    case RunUse.Downhill:
+    case RunUse.Skitour:
+      return {
+        stops: [
+          { maxSteepness: 0.05, difficulty: null }, // No difficulty below 5%
+          { maxSteepness: 0.25, difficulty: RunDifficulty.EASY },
+          { maxSteepness: 0.4, difficulty: RunDifficulty.INTERMEDIATE },
+          { maxSteepness: 0.8, difficulty: RunDifficulty.ADVANCED }, // Advanced up to 80%
+          { maxSteepness: 1.2, difficulty: RunDifficulty.EXPERT }, // Expert up to 120%
+        ],
+      };
+    case RunUse.Nordic:
+      return {
+        stops: [
+          { maxSteepness: 0.1, difficulty: RunDifficulty.EASY },
+          { maxSteepness: 0.15, difficulty: RunDifficulty.INTERMEDIATE },
+          { maxSteepness: 0.3, difficulty: RunDifficulty.ADVANCED },
+        ],
+      };
+    default:
+      return { stops: [] };
+  }
 }
