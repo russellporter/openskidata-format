@@ -77,11 +77,13 @@ export function getSlopeGradingScaleForUse(
           { maxSteepness: 0.25, difficulty: RunDifficulty.EASY },
           { maxSteepness: 0.4, difficulty: RunDifficulty.INTERMEDIATE },
           { maxSteepness: 0.8, difficulty: RunDifficulty.ADVANCED }, // Advanced up to 80%
-          { maxSteepness: 1.2, difficulty: RunDifficulty.EXPERT }, // Expert up to 120%
+          { maxSteepness: 1.0, difficulty: RunDifficulty.EXPERT }, // Expert up to 100%
+          { maxSteepness: 1.2, difficulty: RunDifficulty.FREERIDE }, // Freeride up to 120%
+          { maxSteepness: Infinity, difficulty: RunDifficulty.EXTREME }, // Extreme above 120%
         ],
       };
     case RunUse.Nordic:
-      return {
+    return {
         stops: [
           { maxSteepness: 0.1, difficulty: RunDifficulty.EASY },
           { maxSteepness: 0.15, difficulty: RunDifficulty.INTERMEDIATE },
