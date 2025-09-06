@@ -6,6 +6,7 @@ import {
   getProfileGeometry,
 } from './ElevationProfile'
 import { FeatureType } from './FeatureType'
+import { RunDifficultyConvention } from './RunDifficultyConvention'
 import { SkiAreaSummaryFeature } from './SkiArea'
 import { SnowCoverHistory } from './SnowCoverHistory'
 import { Source } from './Source'
@@ -131,39 +132,6 @@ export enum RunColorValue {
   GREY = 'hsl(0, 0%, 35%)',
 }
 
-/**
- * Run difficulty colors vary by region. This enum defines the color convention used for runs at a ski area.
- * @enum {string}
- */
-export enum RunDifficultyConvention {
-  /**
-   * European color convention:
-   * - Green: Novice
-   * - Blue: Easy
-   * - Red: Intermediate
-   * - Black: Advanced/Expert
-   * - Orange: Freeride/Extreme
-   */
-  EUROPE = 'europe',
-
-  /**
-   * Japanese color convention:
-   * - Green: Novice/Easy
-   * - Red: Intermediate
-   * - Black: Advanced/Expert
-   * - Orange: Freeride/Extreme
-   */
-  JAPAN = 'japan',
-
-  /**
-   * North American color convention:
-   * - Green: Novice/Easy
-   * - Blue: Intermediate
-   * - Black: Advanced/Expert
-   * - Orange: Freeride/Extreme
-   */
-  NORTH_AMERICA = 'north_america',
-}
 
 export function getRunElevationData(feature: RunFeature): ElevationData | null {
   const geometry = feature.geometry

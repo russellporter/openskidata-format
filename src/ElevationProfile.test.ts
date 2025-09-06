@@ -8,10 +8,10 @@ import { getLiftElevationData, LiftFeature, LiftType } from './Lift'
 import {
   getRunElevationData,
   RunDifficulty,
-  RunDifficultyConvention,
   RunFeature,
   RunUse,
 } from './Run'
+import { RunDifficultyConvention } from './RunDifficultyConvention'
 import { Status } from './Status'
 
 describe('ElevationProfile', () => {

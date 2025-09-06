@@ -1,6 +1,6 @@
 {
   "name": "openskidata-format",
-  "version": "5.2.0",
+  "version": "5.3.0",
   "description": "Data format for OpenSkiMap.org",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -33,7 +33,10 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@turf/boolean-point-in-polygon": "^7.2.0",
+    "@turf/center": "^7.2.0",
     "@turf/distance": "^7.2.0",
+    "@turf/helpers": "^7.2.0",
     "@turf/length": "^7.2.0",
     "@turf/line-chunk": "^7.2.0",
     "@turf/meta": "^7.2.0",
