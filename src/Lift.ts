@@ -27,6 +27,7 @@ export type LiftGeometry = GeoJSON.LineString | GeoJSON.MultiLineString
  * @property {Status} status - Operational status of the lift. Derived from OpenStreetMap lifecycle tags.
  * @property {string | null} name - Name of the lift. Derived from the OpenStreetMap name tag.
  * @property {string | null} ref - Reference code/number for the lift. Derived from the OpenStreetMap ref tag.
+ * @property {string | null} refFRCAIRN - French CAIRN reference identifier for the lift. Derived from the OpenStreetMap ref:FR:CAIRN tag.
  * @property {string | null} description - Description of the lift. Derived from the OpenStreetMap description tag.
  * @property {boolean | null} oneway - Whether the lift allows riding only in one direction. Derived from the OpenStreetMap oneway tag.
  * @property {number | null} occupancy - Number of people each carrier can transport. Derived from the OpenStreetMap aerialway:occupancy tag.
@@ -47,6 +48,7 @@ export type LiftProperties = {
   status: Status
   name: string | null
   ref: string | null
+  refFRCAIRN: string | null
   description: string | null
   oneway: boolean | null
   occupancy: number | null
