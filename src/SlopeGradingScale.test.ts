@@ -25,7 +25,7 @@ describe("getEstimatedRunDifficulty", () => {
         elevationProfile: null,
         sources: [],
         websites: [],
-        wikidata_id: null,
+        wikidataID: null,
       },
     });
 
@@ -55,7 +55,7 @@ describe("getEstimatedRunDifficulty", () => {
         elevationProfile: null,
         sources: [],
         websites: [],
-        wikidata_id: null,
+        wikidataID: null,
       },
     });
 
@@ -88,7 +88,7 @@ describe("getEstimatedRunDifficulty", () => {
         elevationProfile: null,
         sources: [],
         websites: [],
-        wikidata_id: null,
+        wikidataID: null,
       },
     });
 
@@ -120,7 +120,7 @@ describe("getEstimatedRunDifficulty", () => {
         elevationProfile: null,
         sources: [],
         websites: [],
-        wikidata_id: null,
+        wikidataID: null,
       },
     });
 

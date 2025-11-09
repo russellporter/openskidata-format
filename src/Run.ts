@@ -55,7 +55,7 @@ export type RunFeature = GeoJSON.Feature<RunGeometry, RunProperties>
  * @property {ElevationProfile | null} elevationProfile - Elevation profile of the run, only available for runs with LineString geometry.
  * @property {Source[]} sources - Data sources for this run's information
  * @property {string[]} websites - Websites associated with this run, derived from the OpenStreetMap website tag
- * @property {string | null} wikidata_id - Wikidata identifier, if available, derived from the OpenStreetMap wikidata tag
+ * @property {string | null} wikidataID - Wikidata identifier, if available, derived from the OpenStreetMap wikidata tag
  * @property {SnowCoverHistory} [snowCoverHistory] - Historical snow cover data for this run, if available
  */
 export type RunProperties = {
@@ -77,7 +77,7 @@ export type RunProperties = {
   elevationProfile: ElevationProfile | null
   sources: Source[]
   websites: string[]
-  wikidata_id: string | null
+  wikidataID: string | null
   snowCoverHistory?: SnowCoverHistory
 }
 

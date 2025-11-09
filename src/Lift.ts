@@ -38,7 +38,7 @@ export type LiftGeometry = GeoJSON.LineString | GeoJSON.MultiLineString
  * @property {SkiAreaSummaryFeature[]} skiAreas - Ski areas this lift is a part of.
  * @property {Source[]} sources - Data sources for the feature.
  * @property {string[]} websites - Websites associated with this lift. Derived from the OpenStreetMap website tag.
- * @property {string | null} wikidata_id - Wikidata identifier. Derived from the OpenStreetMap wikidata tag.
+ * @property {string | null} wikidataID - Wikidata identifier. Derived from the OpenStreetMap wikidata tag.
  */
 export type LiftProperties = {
   type: FeatureType.Lift
@@ -58,7 +58,7 @@ export type LiftProperties = {
   skiAreas: SkiAreaSummaryFeature[]
   sources: Source[]
   websites: string[]
-  wikidata_id: string | null
+  wikidataID: string | null
 }
 
 export enum LiftType {

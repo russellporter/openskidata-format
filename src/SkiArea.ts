@@ -40,7 +40,7 @@ export type SkiAreaSummaryFeature = GeoJSON.Feature<
 >
 
 /**
- * @property {string} id - Unique identifier for the ski area. The ID is just a hash of the feature, so will change if the feature changes in any way. If a stable identifier is needed, use the wikidata_id property, or a source id.
+ * @property {string} id - Unique identifier for the ski area. The ID is just a hash of the feature, so will change if the feature changes in any way. If a stable identifier is needed, use the wikidataID property, or a source id.
  * @property {string | null} name - Name of the ski area.
  * @property {Source[]} sources - Data sources.
  * @property {SkiAreaActivity[]} activities - Activities available at this ski area, derived from presence of ski runs and Skimap.org data.
@@ -48,7 +48,7 @@ export type SkiAreaSummaryFeature = GeoJSON.Feature<
  * @property {Status | null} status - Operational status. Derived from OpenStreetMap lifecycle tags and Skimap.org data.
  * @property {RunColorConvention} runConvention - Color convention used for runs at this ski area.
  * @property {string[]} websites - Official website(s) of the ski area. Derived from the OpenStreetMap website tag and Skimap.org data.
- * @property {string | null} wikidata_id - Wikidata identifier. Derived from the OpenStreetMap wikidata tag.
+ * @property {string | null} wikidataID - Wikidata identifier. Derived from the OpenStreetMap wikidata tag.
  * @property {Location | null} location - Reverse geocoded country / region information.
  */
 export type SkiAreaProperties = SkiAreaSummaryProperties & {
@@ -56,7 +56,7 @@ export type SkiAreaProperties = SkiAreaSummaryProperties & {
   statistics?: SkiAreaStatistics
   runConvention: RunDifficultyConvention
   websites: string[]
-  wikidata_id: string | null
+  wikidataID: string | null
 }
 
 export type SkiAreaSummaryProperties = {
