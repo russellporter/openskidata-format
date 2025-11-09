@@ -2,11 +2,22 @@
 
 ## Build Commands
 - Build: `npm run build`
-- Release: `npm run build && npm publish`
 - Test: `npm test`
 - Test with watch mode: `npm run test:watch`
 - Test with coverage: `npm run test:coverage`
 - Run single test: `npm test -- path/to/file.test.ts`
+
+## Release Process
+When releasing a new version:
+1. Update the version in `package.json` following semantic versioning:
+   - Major version (X.0.0): Breaking changes (e.g., renaming properties, changing types)
+   - Minor version (0.X.0): New features, backwards compatible
+   - Patch version (0.0.X): Bug fixes, backwards compatible
+2. Commit all changes including the version bump
+3. Push to master
+4. Create a GitHub release with tag `vX.Y.Z` (e.g., `v6.0.0`)
+5. The GitHub Actions workflow will automatically build and publish to npm
+6. After the format is released, update openskidata-processor and openskimap.org repos to use the new version
 
 ## Code Style Guidelines
 - **TypeScript**: Strict mode enabled with ES2020 target
