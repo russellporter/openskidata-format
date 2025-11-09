@@ -237,6 +237,7 @@ describe('ElevationProfile', () => {
           skiAreas: [],
           sources: [],
           ref: null,
+          refFRCAIRN: null,
           description: null,
           oneway: null,
           occupancy: null,
