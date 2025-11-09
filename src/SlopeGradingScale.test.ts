@@ -62,7 +62,8 @@ describe("getEstimatedRunDifficulty", () => {
     expect(getEstimatedRunDifficulty(0.1, downhillScale)).toBe(RunDifficulty.EASY); // 10%
     expect(getEstimatedRunDifficulty(0.3, downhillScale)).toBe(RunDifficulty.INTERMEDIATE); // 30%
     expect(getEstimatedRunDifficulty(0.6, downhillScale)).toBe(RunDifficulty.ADVANCED); // 60%
-    expect(getEstimatedRunDifficulty(1.0, downhillScale)).toBe(RunDifficulty.EXPERT); // 100%
+    expect(getEstimatedRunDifficulty(0.9, downhillScale)).toBe(RunDifficulty.EXPERT); // 90%
+    expect(getEstimatedRunDifficulty(1.0, downhillScale)).toBe(RunDifficulty.FREERIDE); // 100%
   });
 
   it("should return correct difficulty for nordic slopes", () => {
