@@ -1,5 +1,6 @@
 import { ElevationData, getElevationData } from './ElevationProfile'
 import { FeatureType } from './FeatureType'
+import { Place } from './Place'
 import { SkiAreaSummaryFeature } from './SkiArea'
 import { Source } from './Source'
 import { Status } from './Status'
@@ -40,6 +41,7 @@ export type LiftGeometry = GeoJSON.LineString | GeoJSON.MultiLineString
  * @property {Source[]} sources - Data sources for the feature.
  * @property {string[]} websites - Websites associated with this lift. Derived from the OpenStreetMap website tag.
  * @property {string | null} wikidataID - Wikidata identifier. Derived from the OpenStreetMap wikidata tag.
+ * @property {Place[]} places - Geographic places this lift is within (e.g., city, region, country). Derived from reverse geocoding.
  */
 export type LiftProperties = {
   type: FeatureType.Lift
@@ -61,6 +63,7 @@ export type LiftProperties = {
   sources: Source[]
   websites: string[]
   wikidataID: string | null
+  places: Place[]
 }
 
 export enum LiftType {

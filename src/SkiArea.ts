@@ -1,6 +1,6 @@
 import { FeatureType } from './FeatureType'
 import { LiftType } from './Lift'
-import { Location } from './Location'
+import { Place } from './Place'
 import { RunDifficulty } from './Run'
 import { RunDifficultyConvention } from './RunDifficultyConvention'
 import { SnowCoverHistory } from './SnowCoverHistory'
@@ -49,7 +49,7 @@ export type SkiAreaSummaryFeature = GeoJSON.Feature<
  * @property {RunColorConvention} runConvention - Color convention used for runs at this ski area.
  * @property {string[]} websites - Official website(s) of the ski area. Derived from the OpenStreetMap website tag and Skimap.org data.
  * @property {string | null} wikidataID - Wikidata identifier. Derived from the OpenStreetMap wikidata tag.
- * @property {Location | null} location - Reverse geocoded country / region information.
+ * @property {Place[]} places - Geographic places this ski area is within (e.g., city, region, country). Derived from reverse geocoding.
  */
 export type SkiAreaProperties = SkiAreaSummaryProperties & {
   sources: Source[]
@@ -65,7 +65,7 @@ export type SkiAreaSummaryProperties = {
   name: string | null
   activities: SkiAreaActivity[]
   status: Status | null
-  location: Location | null
+  places: Place[]
 }
 
 export enum SkiAreaActivity {

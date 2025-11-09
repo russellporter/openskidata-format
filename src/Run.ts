@@ -6,6 +6,7 @@ import {
   getProfileGeometry,
 } from './ElevationProfile'
 import { FeatureType } from './FeatureType'
+import { Place } from './Place'
 import { RunDifficultyConvention } from './RunDifficultyConvention'
 import { SkiAreaSummaryFeature } from './SkiArea'
 import { SnowCoverHistory } from './SnowCoverHistory'
@@ -56,6 +57,7 @@ export type RunFeature = GeoJSON.Feature<RunGeometry, RunProperties>
  * @property {Source[]} sources - Data sources for this run's information
  * @property {string[]} websites - Websites associated with this run, derived from the OpenStreetMap website tag
  * @property {string | null} wikidataID - Wikidata identifier, if available, derived from the OpenStreetMap wikidata tag
+ * @property {Place[]} places - Geographic places this run is within (e.g., city, region, country). Derived from reverse geocoding.
  * @property {SnowCoverHistory} [snowCoverHistory] - Historical snow cover data for this run, if available
  */
 export type RunProperties = {
@@ -78,6 +80,7 @@ export type RunProperties = {
   sources: Source[]
   websites: string[]
   wikidataID: string | null
+  places: Place[]
   snowCoverHistory?: SnowCoverHistory
 }
 

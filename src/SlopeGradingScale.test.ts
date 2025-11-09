@@ -26,6 +26,7 @@ describe("getEstimatedRunDifficulty", () => {
         sources: [],
         websites: [],
         wikidataID: null,
+        places: [],
       },
     });
 
@@ -56,6 +57,7 @@ describe("getEstimatedRunDifficulty", () => {
         sources: [],
         websites: [],
         wikidataID: null,
+        places: [],
       },
     });
 
@@ -90,6 +92,7 @@ describe("getEstimatedRunDifficulty", () => {
         sources: [],
         websites: [],
         wikidataID: null,
+        places: [],
       },
     });
 
@@ -122,6 +125,7 @@ describe("getEstimatedRunDifficulty", () => {
         sources: [],
         websites: [],
         wikidataID: null,
+        places: [],
       },
     });
 

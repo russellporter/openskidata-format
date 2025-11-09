@@ -1,4 +1,4 @@
-export type Location = {
+export type Place = {
   iso3166_1Alpha2: string
   iso3166_2: string | null
   localized: {

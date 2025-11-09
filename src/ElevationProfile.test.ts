@@ -177,6 +177,7 @@ describe('ElevationProfile', () => {
           grooming: null,
           websites: [],
           wikidataID: null,
+          places: [],
         },
       }
 
@@ -213,6 +214,7 @@ describe('ElevationProfile', () => {
           grooming: null,
           websites: [],
           wikidataID: null,
+          places: [],
         },
       }
 
@@ -248,6 +250,7 @@ describe('ElevationProfile', () => {
           heating: null,
           websites: [],
           wikidataID: null,
+          places: [],
         },
       }
 
@@ -290,6 +293,7 @@ describe('ElevationProfile', () => {
           sources: [],
           websites: [],
           wikidataID: null,
+          places: [],
         },
         geometry: {
           type: 'LineString',
