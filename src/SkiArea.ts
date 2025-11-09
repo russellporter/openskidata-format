@@ -57,6 +57,7 @@ export type SkiAreaProperties = SkiAreaSummaryProperties & {
   runConvention: RunDifficultyConvention
   websites: string[]
   wikidataID: string | null
+  places: Place[]
 }
 
 export type SkiAreaSummaryProperties = {
@@ -65,7 +66,6 @@ export type SkiAreaSummaryProperties = {
   name: string | null
   activities: SkiAreaActivity[]
   status: Status | null
-  places: Place[]
 }
 
 export enum SkiAreaActivity {
