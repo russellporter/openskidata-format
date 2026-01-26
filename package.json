@@ -26,19 +26,19 @@
   },
   "homepage": "https://github.com/russellporter/openskidata-format#readme",
   "devDependencies": {
-    "@types/geojson": "^7946.0.7",
-    "@types/jest": "^29.5.14",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.2.6",
-    "typescript": "^5"
+    "@types/geojson": "^7946.0.16",
+    "@types/jest": "^30.0.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@turf/boolean-point-in-polygon": "^7.2.0",
-    "@turf/center": "^7.2.0",
-    "@turf/distance": "^7.2.0",
-    "@turf/helpers": "^7.2.0",
-    "@turf/length": "^7.2.0",
-    "@turf/line-chunk": "^7.2.0",
-    "tslib": "^2"
+    "@turf/boolean-point-in-polygon": "^7.3.2",
+    "@turf/center": "^7.3.2",
+    "@turf/distance": "^7.3.2",
+    "@turf/helpers": "^7.3.2",
+    "@turf/length": "^7.3.2",
+    "@turf/line-chunk": "^7.3.2",
+    "tslib": "^2.8.1"
   }
 }

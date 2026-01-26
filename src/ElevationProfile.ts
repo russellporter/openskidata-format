@@ -91,6 +91,12 @@ export function getPitchData(
     units: 'meters',
   }).features.map((feature) => feature.geometry)
 
+  // turf 7.3+ adds Z coordinates to newly created points using segment-end elevation,
+  // but we need distance-based interpolation. Strip Z from non-original vertices so
+  // interpolateElevation can add them correctly.
+  // https://github.com/Turfjs/turf/issues/3007
+  stripNonOriginalElevations(chunkedGeometries, coordinates)
+
   // Mutates the geometries in place to add elevation data
   interpolateElevation(chunkedGeometries)
 
@@ -148,46 +154,21 @@ export function getProfileGeometry(
   geometry: GeoJSON.LineString,
   elevationProfile: ElevationProfile,
 ): GeoJSON.LineString {
-  const geometries = lineChunksForElevationProfile(
+  const profileLine = extractPointsForElevationProfile(
     geometry,
     elevationProfile.resolution,
   )
-  var index = 0
-  for (let subline of geometries) {
-    const firstPoint = subline.coordinates[0]
-    if (firstPoint.length === 2) {
-      firstPoint.push(elevationProfile.heights[index])
-    }
-
-    index++
-
-    if (index === elevationProfile.heights.length) {
-      throw 'Mismatch of points & elevation profile.'
-    }
-
-    const lastPoint = subline.coordinates[subline.coordinates.length - 1]
-    if (lastPoint.length === 2) {
-      lastPoint.push(elevationProfile.heights[index])
-    }
-  }
-
-  if (index !== elevationProfile.heights.length - 1) {
+  if (profileLine.coordinates.length !== elevationProfile.heights.length) {
     throw `Mismatch of points & elevation profile`
   }
 
-  // Check all coordinates have a height
-  for (let subline of geometries) {
-    for (let point of subline.coordinates) {
-      if (point.length < 3) {
-        throw 'All points should have an elevation at this point.'
-      }
-    }
+  for (let i = 0; i < profileLine.coordinates.length; i++) {
+    const point = profileLine.coordinates[i]
+    const height = elevationProfile.heights[i]
+    point.push(height)
   }
 
-  return {
-    type: 'LineString',
-    coordinates: geometries.flatMap((geometry) => geometry.coordinates),
-  }
+  return profileLine
 }
 
 /**
@@ -197,14 +178,18 @@ export function extractPointsForElevationProfile(
   geometry: LineString,
   resolution: number,
 ): GeoJSON.LineString {
-  const geometries = lineChunksForElevationProfile(geometry, resolution)
+  // Important: Z coordinates in the output of lineChunk may be incorrect, ignore them (https://github.com/Turfjs/turf/issues/3007)
+  const lineChunks = lineChunk(geometry, resolution, {
+    units: 'meters',
+  }).features.map((feature) => feature.geometry)
+
   const points: GeoJSON.Position[] = []
-  for (let subline of geometries) {
+  for (let subline of lineChunks) {
     const point = subline.coordinates[0]
     points.push([point[0], point[1]])
   }
-  if (geometries.length > 0) {
-    const geometry = geometries[geometries.length - 1]
+  if (lineChunks.length > 0) {
+    const geometry = lineChunks[lineChunks.length - 1]
     const coords = geometry.coordinates
     if (coords.length > 1) {
       const point = coords[coords.length - 1]
@@ -216,15 +201,6 @@ export function extractPointsForElevationProfile(
     type: 'LineString',
     coordinates: points,
   }
-}
-
-function lineChunksForElevationProfile(
-  geometry: LineString,
-  resolution: number,
-): GeoJSON.LineString[] {
-  return lineChunk(geometry, resolution, {
-    units: 'meters',
-  }).features.map((feature) => feature.geometry)
 }
 
 export function getAscentAndDescent(
@@ -275,6 +251,27 @@ export function getAscentAndDescent(
     minElevationInMeters: result.minElevation,
     maxElevationInMeters: result.maxElevation,
     verticalInMeters: result.maxElevation - result.minElevation,
+  }
+}
+
+/**
+ * Strip Z coordinates from points that were created by lineChunk (not original vertices).
+ * Original vertices are identified by matching lon/lat coordinates.
+ * Mutates the geometries in place.
+ */
+function stripNonOriginalElevations(
+  geometries: GeoJSON.LineString[],
+  originalCoordinates: GeoJSON.Position[],
+) {
+  const originalSet = new Set(originalCoordinates.map((c) => `${c[0]},${c[1]}`))
+
+  for (const geometry of geometries) {
+    for (const point of geometry.coordinates) {
+      const key = `${point[0]},${point[1]}`
+      if (!originalSet.has(key) && point.length >= 3) {
+        point.length = 2
+      }
+    }
   }
 }
 
