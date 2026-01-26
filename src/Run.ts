@@ -51,6 +51,8 @@ export type RunFeature = GeoJSON.Feature<RunGeometry, RunProperties>
  * @property {boolean | null} lit - Whether the run has lighting for night skiing, derived from the OpenStreetMap "piste:lit" or "lit" tag.
  * @property {boolean | null} gladed - Whether the run is through gladed/tree terrain, derived from the OpenStreetMap "piste:gladed" or "gladed" tag.
  * @property {boolean | null} patrolled - Whether the run is patrolled by ski patrol, derived from the OpenStreetMap "piste:patrolled" or "patrolled" tag.
+ * @property {boolean | null} snowmaking - Whether the run has its operation secured through snowmaking, derived from the OpenStreetMap "piste:snowmaking" tag.
+ * @property {boolean | null} snowfarming - Whether the run has its early season operation secured through snowfarming (storing snow from previous season), derived from the OpenStreetMap "piste:snowfarming" tag.
  * @property {RunGrooming | null} grooming - Grooming status/type of the run, derived from the OpenStreetMap "piste:grooming" tag. If not specified explicitly, for difficulties "expert", "freeride", and "extreme", grooming is assumed to be "backcountry".
  * @property {SkiAreaSummaryFeature[]} skiAreas - Ski areas this run belongs to. Derived from the OpenStreetMap site=piste relation or landuse=winter_sports area and proximity to ski area features. Runs with "backcountry" grooming are not associated with ski areas unless they have a "piste:patrolled=yes" or "patrolled=yes" OpenStreetMap tag, or are part of a "site=piste" ski area relation.
  * @property {ElevationProfile | null} elevationProfile - Elevation profile of the run, only available for runs with LineString geometry.
@@ -74,6 +76,8 @@ export type RunProperties = {
   lit: boolean | null
   gladed: boolean | null
   patrolled: boolean | null
+  snowmaking: boolean | null
+  snowfarming: boolean | null
   grooming: RunGrooming | null
   skiAreas: SkiAreaSummaryFeature[]
   elevationProfile: ElevationProfile | null
