@@ -352,6 +352,7 @@ describe('ElevationProfile', () => {
           detachable: null,
           bubble: null,
           heating: null,
+          stations: [],
           websites: [],
           wikidataID: null,
           places: [],

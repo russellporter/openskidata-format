@@ -3,6 +3,7 @@ import { FeatureType } from './FeatureType'
 import { Place } from './Place'
 import { SkiAreaSummaryFeature } from './SkiArea'
 import { Source } from './Source'
+import { LiftStationSpotFeature } from './Spot'
 import { Status } from './Status'
 import { exhaustiveMatchingGuard } from './util/exhaustiveMatchingGuard'
 
@@ -44,6 +45,7 @@ export type Access = 'private' | null
  * @property {boolean | null} detachable - Whether the lift has detachable grips. Derived from the OpenStreetMap aerialway:detachable tag.
  * @property {boolean | null} bubble - Whether the lift has bubbles/covers to protect from weather. Derived from the OpenStreetMap aerialway:bubble tag.
  * @property {boolean | null} heating - Whether the lift has heated carriers/seats. Derived from the OpenStreetMap aerialway:heating tag.
+ * @property {LiftStationSpotFeature[]} stations - Lift station spot features associated with this lift.
  * @property {SkiAreaSummaryFeature[]} skiAreas - Ski areas this lift is a part of.
  * @property {Source[]} sources - Data sources for the feature.
  * @property {string[]} websites - Websites associated with this lift. Derived from the OpenStreetMap website tag.
@@ -67,6 +69,7 @@ export type LiftProperties = {
   detachable: boolean | null
   bubble: boolean | null
   heating: boolean | null
+  stations: LiftStationSpotFeature[]
   skiAreas: SkiAreaSummaryFeature[]
   sources: Source[]
   websites: string[]

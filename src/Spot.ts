@@ -12,6 +12,14 @@ import { Source } from './Source'
 export type SpotFeature = GeoJSON.Feature<SpotGeometry, SpotProperties>
 
 /**
+ * A GeoJSON feature representing a lift station spot.
+ */
+export type LiftStationSpotFeature = GeoJSON.Feature<
+  SpotGeometry,
+  LiftStationSpotProperties
+>
+
+/**
  * Geometry type for spots - always a point.
  */
 export type SpotGeometry = GeoJSON.Point
@@ -78,6 +86,7 @@ export enum DismountRequirement {
  * @property {LiftStationPosition | null} position - From OpenStreetMap tag `aerialway:station=bottom|mid|top`.
  * @property {boolean | null} entry - Whether passengers can board here. From OpenStreetMap tag `aerialway:access=entry|both|no`.
  * @property {boolean | null} exit - Whether passengers can alight here. From OpenStreetMap tag `aerialway:access=exit|both|no`.
+ * @property {string} liftId - ID of the lift feature associated with this station.
  */
 export type LiftStationSpotProperties = SpotBaseProperties & {
   spotType: SpotType.LiftStation
@@ -85,6 +94,7 @@ export type LiftStationSpotProperties = SpotBaseProperties & {
   position: LiftStationPosition | null
   entry: boolean | null
   exit: boolean | null
+  liftId: string
 }
 
 /**
