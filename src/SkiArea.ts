@@ -102,7 +102,12 @@ export type RunStatisticsByActivityAndDifficulty = {
 }
 
 export type RunStatisticsByDifficulty = {
-  [key in RunDifficulty | 'other']?: { count: number; lengthInKm: number }
+  [key in RunDifficulty | 'other']?: {
+    count: number
+    lengthInKm: number
+    snowmakingLengthInKm?: number
+    snowfarmingLengthInKm?: number
+  }
 }
 
 export type LiftStatistics = {
