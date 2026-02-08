@@ -74,7 +74,11 @@ describe('ElevationProfile', () => {
 
       const result = getPitchData(profileGeometry)
 
-      expect(result.maxPitchInPercent).toBeCloseTo(0.377)
+      // With the new resolution calculation, the actual resolution divides the distance evenly
+      // Total length is ~60.44m, with default resolution of 25m: numSegments = ceil(60.44/25) = 3, actualResolution = 60.44/3 ≈ 20.15m
+      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(20.15, 1)
+      expect(result.pitchCalculationResolutionInMeters).toBeLessThanOrEqual(25)
+      expect(result.maxPitchInPercent).toBeCloseTo(0.489, 2)
       expect(result.averagePitchInPercent).toBeCloseTo(0.2482)
       expect(result.inclinedLengthInMeters).toBeCloseTo(63.0597)
     })
@@ -96,6 +100,101 @@ describe('ElevationProfile', () => {
 
       // The overall change should be more reasonable when calculated over fixed distances
       expect(result.maxPitchInPercent).toBeLessThan(0.5) // Should be much less than the individual segment pitch
+    })
+
+    it('calculates resolution that divides distance evenly', () => {
+      const profileGeometry: GeoJSON.LineString = {
+        type: 'LineString',
+        coordinates: [
+          [0, 0, 100],
+          [0, 0.001, 110], // ~111m distance
+          [0, 0.002, 105], // ~111m distance
+        ],
+      }
+
+      const result = getPitchData(profileGeometry, 50)
+
+      // Resolution should be <= 50
+      expect(result.pitchCalculationResolutionInMeters).toBeLessThanOrEqual(50)
+
+      // With ~222m total length and 50m input resolution:
+      // numSegments = ceil(222/50) = 5
+      // actualResolution = 222/5 = 44.4m
+      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(44.4, 0)
+    })
+
+    it('uses total length as resolution when line is shorter than input resolution', () => {
+      const profileGeometry: GeoJSON.LineString = {
+        type: 'LineString',
+        coordinates: [
+          [0, 0, 100],
+          [0, 0.0001, 110], // ~11m distance
+        ],
+      }
+
+      const result = getPitchData(profileGeometry, 50)
+
+      // Resolution should equal the total length since numSegments = ceil(11/50) = 1
+      // actualResolution = 11/1 = 11m
+      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(11.1, 0)
+      expect(result.pitchCalculationResolutionInMeters).toBeLessThanOrEqual(50)
+    })
+
+    it('ensures all chunks are processed without skipping short chunks', () => {
+      // Create a line that would previously have a short final chunk
+      const profileGeometry: GeoJSON.LineString = {
+        type: 'LineString',
+        coordinates: [
+          [11.177425600412874, 47.31265682344346, 100],
+          [11.177224899122194, 47.312533118812354, 120], // ~20m, steep
+          [11.176823496540862, 47.31229807921545, 105], // ~40m, gentle descent
+        ],
+      }
+
+      const result = getPitchData(profileGeometry, 25)
+
+      // With evenly divided chunks, no chunks should be skipped
+      // The max pitch should be calculated from all segments
+      expect(result.maxPitchInPercent).toBeGreaterThan(0)
+      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(20.15, 1)
+    })
+
+    it('returns null pitch data for very short lines', () => {
+      const profileGeometry: GeoJSON.LineString = {
+        type: 'LineString',
+        coordinates: [
+          [0, 0, 100],
+          [0, 0.00001, 101], // ~1.11m distance
+        ],
+      }
+
+      const result = getPitchData(profileGeometry, 25)
+
+      // Lines shorter than half the resolution should return null pitch data
+      // because elevation data resolution makes pitch calculations unreliable
+      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(1.11, 1)
+      expect(result.maxPitchInPercent).toBeNull()
+      expect(result.averagePitchInPercent).toBeNull()
+      expect(result.overallPitchInPercent).toBeNull()
+      expect(result.inclinedLengthInMeters).toBeGreaterThan(0) // This should still be calculated
+    })
+
+    it('calculates pitch data for lines just above the minimum threshold', () => {
+      const profileGeometry: GeoJSON.LineString = {
+        type: 'LineString',
+        coordinates: [
+          [0, 0, 100],
+          [0, 0.00015, 105], // ~16.7m distance, just above half of 25m
+        ],
+      }
+
+      const result = getPitchData(profileGeometry, 25)
+
+      // Lines at or above half the resolution should calculate pitch data
+      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(16.7, 0)
+      expect(result.maxPitchInPercent).not.toBeNull()
+      expect(result.averagePitchInPercent).not.toBeNull()
+      expect(result.overallPitchInPercent).not.toBeNull()
     })
   })
 

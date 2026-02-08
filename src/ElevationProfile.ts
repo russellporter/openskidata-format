@@ -37,6 +37,7 @@ type PitchData = {
   maxPitchInPercent: number | null
   inclinedLengthInMeters: number
   overallPitchInPercent: number | null
+  pitchCalculationResolutionInMeters: number
 }
 
 export function getElevationData(
@@ -86,8 +87,25 @@ export function getPitchData(
     totalElevationChange += Math.abs(elevation)
   }
 
-  // Chunk the line into fixed-length segments for max pitch calculation
-  const chunkedGeometries = lineChunk(profileGeometry, resolutionInMeters, {
+  // If the line is too short relative to the resolution, pitch calculations are unreliable
+  // due to elevation data resolution. A 1m elevation change over 1m distance would be a 45 degree slope,
+  // which can easily happen due to elevation data precision issues.
+  if (totalLength < resolutionInMeters / 2) {
+    return {
+      averagePitchInPercent: null,
+      maxPitchInPercent: null,
+      inclinedLengthInMeters: totalInclinedLength,
+      overallPitchInPercent: null,
+      pitchCalculationResolutionInMeters: totalLength,
+    }
+  }
+
+  // Calculate a resolution that divides the distance evenly, with the constraint that it must be <= resolutionInMeters
+  const numSegments = Math.ceil(totalLength / resolutionInMeters)
+  const actualResolution = totalLength / numSegments
+
+  // Chunk the line into segments using the calculated resolution for max pitch calculation
+  const chunkedGeometries = lineChunk(profileGeometry, actualResolution, {
     units: 'meters',
   }).features.map((feature) => feature.geometry)
 
@@ -100,10 +118,8 @@ export function getPitchData(
   // Mutates the geometries in place to add elevation data
   interpolateElevation(chunkedGeometries)
 
-  // Initialize max pitch values
-  let maxPitchValue: number | null = null
-
-  // Calculate max pitch over the fixed-length chunks
+  // Calculate max pitch over the evenly-divided chunks
+  let maxPitchValue = 0
   for (const chunk of chunkedGeometries) {
     const chunkCoords = chunk.coordinates
 
@@ -116,11 +132,8 @@ export function getPitchData(
       { units: 'meters' },
     )
 
-    // Skip chunks that are too close together to calculate pitch reliably (can happen for the last chunk)
-    if (chunkLengthInMeters < resolutionInMeters / 2) continue
-
     const chunkPitch = Math.abs(elevationChange / chunkLengthInMeters)
-    if (maxPitchValue === null || chunkPitch > maxPitchValue) {
+    if (chunkPitch > maxPitchValue) {
       maxPitchValue = chunkPitch
     }
   }
@@ -130,23 +143,12 @@ export function getPitchData(
     coordinates[coordinates.length - 1][2] - coordinates[0][2],
   )
 
-  // null maxPitchValue indicates the line is shorter than half the resolution, in which case the accuracy of pitch calculations
-  // is questionable as a 1m change in elevation over
-  // 1m of distance would be a 45 degree slope, this can happen due to resolution of the elevation data.
-  if (maxPitchValue === null) {
-    return {
-      averagePitchInPercent: null,
-      maxPitchInPercent: null,
-      inclinedLengthInMeters: totalInclinedLength,
-      overallPitchInPercent: null,
-    }
-  }
-
   return {
     averagePitchInPercent: averagePitch,
     maxPitchInPercent: maxPitchValue,
     inclinedLengthInMeters: totalInclinedLength,
     overallPitchInPercent: overallElevationChange / totalLength,
+    pitchCalculationResolutionInMeters: actualResolution,
   }
 }
 
