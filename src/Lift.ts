@@ -11,12 +11,18 @@ export type LiftFeature = GeoJSON.Feature<LiftGeometry, LiftProperties>
 export type LiftGeometry = GeoJSON.LineString | GeoJSON.MultiLineString
 
 /**
+ * Access restriction for a lift feature.
+ * - 'private': The lift has restricted access (derived from OSM access=private tag)
+ * - null: No access restriction or access information not available
+ */
+export type Access = 'private' | null
+
+/**
  * A feature representing a ski lift.
  *
  * Lifts are derived from OpenStreetMap aerialway/railway features that are commonly used for winter sports.
  *
  * Note:
- * - Private lifts are not included in this dataset.
  * - Railways (except funiculars) are included only if they are part of a site=piste relation.
  * - Railway parts are not merged together so a single railway line may be represented as multiple features.
  * - Some lifts included in the dataset may be for other purposes (amusement parks, etc).
@@ -26,6 +32,7 @@ export type LiftGeometry = GeoJSON.LineString | GeoJSON.MultiLineString
  * @property {string} id - Unique identifier for the lift. The ID is just a hash of the feature, so will change if the feature changes in any way.
  * @property {LiftType} liftType - Type of lift (e.g. chair_lift, gondola). Derived from OpenStreetMap aerialway/railway tags.
  * @property {Status} status - Operational status of the lift. Derived from OpenStreetMap lifecycle tags.
+ * @property {Access} access - Access restriction for the lift. Set to "private" when derived from OpenStreetMap access=private tag, otherwise null.
  * @property {string | null} name - Name of the lift. Derived from the OpenStreetMap name tag.
  * @property {string | null} ref - Reference code/number for the lift. Derived from the OpenStreetMap ref tag.
  * @property {string | null} refFRCAIRN - French CAIRN reference identifier. Derived from the OpenStreetMap ref:FR:CAIRN tag.
@@ -48,6 +55,7 @@ export type LiftProperties = {
   id: string
   liftType: LiftType
   status: Status
+  access: Access
   name: string | null
   ref: string | null
   refFRCAIRN: string | null

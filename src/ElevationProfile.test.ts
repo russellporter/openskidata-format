@@ -338,6 +338,7 @@ describe('ElevationProfile', () => {
           id: '123',
           liftType: LiftType.ChairLift,
           status: Status.Operating,
+          access: null,
           name: 'Test Lift',
           skiAreas: [],
           sources: [],
