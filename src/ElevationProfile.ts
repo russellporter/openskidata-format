@@ -10,10 +10,12 @@ import { LineString } from 'geojson'
  * except for the final height which corresponds to the LineString endpoint and may have a different spacing.
  * Height values can be mapped to geographical coordinates using Turf.js: `turf.lineChunk(geometry, resolution, {units: 'meters'})`.
  * @property {number} resolution - The horizontal sampling distance in meters between consecutive height measurements.
+ * @property {number} targetResolution - The horizontal sampling distance in meters that was requested for the elevation profile. The actual resolution may be less to ensure an integer number of segments along the line. This is used for reconstructing the profile geometry from the feature geometry.
  */
 export type ElevationProfile = {
   heights: number[]
   resolution: number
+  targetResolution: number
 }
 
 /**
@@ -52,7 +54,7 @@ export function getElevationData(
 
 export function getPitchData(
   profileGeometry: GeoJSON.LineString,
-  resolutionInMeters: number = 25, // Default resolution of 25 meters for pitch calculation
+  minResolutionInMeters: number = 25, // Default resolution of 25 meters for pitch calculation
 ): PitchData {
   const coordinates = profileGeometry.coordinates
   if (coordinates[0].length < 3) {
@@ -90,7 +92,7 @@ export function getPitchData(
   // If the line is too short relative to the resolution, pitch calculations are unreliable
   // due to elevation data resolution. A 1m elevation change over 1m distance would be a 45 degree slope,
   // which can easily happen due to elevation data precision issues.
-  if (totalLength < resolutionInMeters / 2) {
+  if (totalLength < minResolutionInMeters / 2) {
     return {
       averagePitchInPercent: null,
       maxPitchInPercent: null,
@@ -100,20 +102,11 @@ export function getPitchData(
     }
   }
 
-  // Calculate a resolution that divides the distance evenly, with the constraint that it must be <= resolutionInMeters
-  const numSegments = Math.ceil(totalLength / resolutionInMeters)
-  const actualResolution = totalLength / numSegments
-
   // Chunk the line into segments using the calculated resolution for max pitch calculation
-  const chunkedGeometries = lineChunk(profileGeometry, actualResolution, {
-    units: 'meters',
-  }).features.map((feature) => feature.geometry)
-
-  // turf 7.3+ adds Z coordinates to newly created points using segment-end elevation,
-  // but we need distance-based interpolation. Strip Z from non-original vertices so
-  // interpolateElevation can add them correctly.
-  // https://github.com/Turfjs/turf/issues/3007
-  stripNonOriginalElevations(chunkedGeometries, coordinates)
+  const {
+    geometry: chunkedGeometries,
+    resolutionInMeters: actualResolutionInMeters,
+  } = lineChunkPatched(profileGeometry, minResolutionInMeters)
 
   // Mutates the geometries in place to add elevation data
   interpolateElevation(chunkedGeometries)
@@ -148,7 +141,7 @@ export function getPitchData(
     maxPitchInPercent: maxPitchValue,
     inclinedLengthInMeters: totalInclinedLength,
     overallPitchInPercent: overallElevationChange / totalLength,
-    pitchCalculationResolutionInMeters: actualResolution,
+    pitchCalculationResolutionInMeters: actualResolutionInMeters,
   }
 }
 
@@ -156,12 +149,20 @@ export function getProfileGeometry(
   geometry: GeoJSON.LineString,
   elevationProfile: ElevationProfile,
 ): GeoJSON.LineString {
-  const profileLine = extractPointsForElevationProfile(
-    geometry,
-    elevationProfile.resolution,
-  )
+  const { geometry: profileLine, resolutionInMeters: actualResolution } =
+    extractPointsForElevationProfile(
+      geometry,
+      elevationProfile.targetResolution,
+    )
   if (profileLine.coordinates.length !== elevationProfile.heights.length) {
     throw `Mismatch of points & elevation profile`
+  }
+
+  if (
+    Math.abs(actualResolution - elevationProfile.resolution) >
+    elevationProfile.resolution * 0.001
+  ) {
+    throw `Resolution mismatch between profile geometry (${actualResolution}) and elevation profile (${elevationProfile.resolution})`
   }
 
   for (let i = 0; i < profileLine.coordinates.length; i++) {
@@ -174,16 +175,16 @@ export function getProfileGeometry(
 }
 
 /**
- * Determines the points to use for an elevation profile.
+ * Determines the points to use for an elevation profile, given a minimum horizontal resolution. The resolution is selected to have evenly spaced points along the line.
  */
 export function extractPointsForElevationProfile(
   geometry: LineString,
-  resolution: number,
-): GeoJSON.LineString {
-  // Important: Z coordinates in the output of lineChunk may be incorrect, ignore them (https://github.com/Turfjs/turf/issues/3007)
-  const lineChunks = lineChunk(geometry, resolution, {
-    units: 'meters',
-  }).features.map((feature) => feature.geometry)
+  minResolutionInMeters: number,
+): { resolutionInMeters: number; geometry: GeoJSON.LineString } {
+  const { geometry: lineChunks, resolutionInMeters } = lineChunkPatched(
+    geometry,
+    minResolutionInMeters,
+  )
 
   const points: GeoJSON.Position[] = []
   for (let subline of lineChunks) {
@@ -200,8 +201,11 @@ export function extractPointsForElevationProfile(
   }
 
   return {
-    type: 'LineString',
-    coordinates: points,
+    resolutionInMeters,
+    geometry: {
+      type: 'LineString',
+      coordinates: points,
+    },
   }
 }
 
@@ -254,6 +258,78 @@ export function getAscentAndDescent(
     maxElevationInMeters: result.maxElevation,
     verticalInMeters: result.maxElevation - result.minElevation,
   }
+}
+
+/**
+ * Turf's lineChunk has several issues:
+ * - it doesn't allow for a custom resolution that divides the line evenly, which is important for consistent pitch calculations
+ *   change: calculate a resolution that divides the line into an integer number of segments, with a maximum of the provided resolution
+ * - it includes elevations from the original geometry on newly created points which are wrong (https://github.com/Turfjs/turf/issues/3007)
+ *   fix: strip Z coordinates from non-original points
+ * - it can produce a last point that is very close but not exactly the same as the original endpoint
+ *   fix: set the last point to be exactly the original endpoint
+ * - it can produce two points very close to the end of line due to floating point precision issues
+ *   fix: drop the second to last point if it's very close to the end
+ *
+ * @param geometry
+ * @param minResolutionInMeters
+ * @returns
+ */
+export function lineChunkPatched(
+  geometry: LineString,
+  minResolutionInMeters: number,
+): { resolutionInMeters: number; geometry: GeoJSON.LineString[] } {
+  const resolutionInMeters = horizontalResolutionFitting(
+    geometry,
+    minResolutionInMeters,
+  )
+
+  const lineChunks = lineChunk(geometry, resolutionInMeters, {
+    units: 'meters',
+  }).features.map((feature) => feature.geometry)
+
+  // Check the last segment has the expected length
+  const lastSegment = lineChunks[lineChunks.length - 1]
+  const lastSegmentLength = length(
+    { type: 'Feature', geometry: lastSegment, properties: {} },
+    { units: 'meters' },
+  )
+  if (lastSegmentLength < resolutionInMeters * 0.01) {
+    // If the last segment is very short, which can happen due to floating point precision issues, drop it to avoid issues with elevation interpolation
+    lineChunks.pop()
+  }
+
+  // Set the last point from the original coordinates, turf line chunk can sometimes produce a last point that
+  // is very close but not exactly the same as the original endpoint, which can cause issues with elevation interpolation
+  const lastOriginalPoint =
+    geometry.coordinates[geometry.coordinates.length - 1]
+  const lastChunkCoords = lineChunks[lineChunks.length - 1].coordinates
+  lastChunkCoords[lastChunkCoords.length - 1] = lastOriginalPoint
+
+  // turf 7.3+ adds Z coordinates to newly created points using segment-end elevation,
+  // but we need distance-based interpolation. Strip Z from non-original vertices so
+  // interpolateElevation can add them correctly.
+  // https://github.com/Turfjs/turf/issues/3007
+  stripNonOriginalElevations(lineChunks, geometry.coordinates)
+
+  return { resolutionInMeters, geometry: lineChunks }
+}
+
+function horizontalResolutionFitting(
+  geometry: LineString,
+  minResolution: number,
+): number {
+  const totalLength = length(
+    { type: 'Feature', geometry, properties: {} },
+    { units: 'meters' },
+  )
+
+  if (totalLength === 0) {
+    return 0
+  }
+
+  const numSegments = Math.ceil(totalLength / minResolution)
+  return totalLength / numSegments
 }
 
 /**
@@ -328,7 +404,7 @@ function interpolateElevation(geometries: GeoJSON.LineString[]) {
   const referencePoints = allPoints.filter((p) => p.hasElevation)
 
   if (referencePoints.length <= 1) {
-    throw 'At least two points with elevation data are required'
+    throw `At least two points with elevation data are required ${JSON.stringify(allPoints)}`
   }
 
   // Process segments between each pair of reference points

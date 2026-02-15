@@ -1,16 +1,13 @@
+import length from '@turf/length'
 import {
   extractPointsForElevationProfile,
   getAscentAndDescent,
   getPitchData,
+  lineChunkPatched,
 } from './ElevationProfile'
 import { FeatureType } from './FeatureType'
 import { getLiftElevationData, LiftFeature, LiftType } from './Lift'
-import {
-  getRunElevationData,
-  RunDifficulty,
-  RunFeature,
-  RunUse,
-} from './Run'
+import { getRunElevationData, RunDifficulty, RunFeature, RunUse } from './Run'
 import { RunDifficultyConvention } from './RunDifficultyConvention'
 import { Status } from './Status'
 
@@ -75,10 +72,10 @@ describe('ElevationProfile', () => {
       const result = getPitchData(profileGeometry)
 
       // With the new resolution calculation, the actual resolution divides the distance evenly
-      // Total length is ~60.44m, with default resolution of 25m: numSegments = ceil(60.44/25) = 3, actualResolution = 60.44/3 ≈ 20.15m
-      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(20.15, 1)
+      // Total length is ~60.44m, with default resolution of 25m: numSegments = ceil(60.44/25) = 3, actualResolution = 60.44/3 ≈ 20.14m
+      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(20.14)
       expect(result.pitchCalculationResolutionInMeters).toBeLessThanOrEqual(25)
-      expect(result.maxPitchInPercent).toBeCloseTo(0.489, 2)
+      expect(result.maxPitchInPercent).toBeCloseTo(0.489)
       expect(result.averagePitchInPercent).toBeCloseTo(0.2482)
       expect(result.inclinedLengthInMeters).toBeCloseTo(63.0597)
     })
@@ -119,8 +116,8 @@ describe('ElevationProfile', () => {
 
       // With ~222m total length and 50m input resolution:
       // numSegments = ceil(222/50) = 5
-      // actualResolution = 222/5 = 44.4m
-      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(44.4, 0)
+      // actualResolution = 222/5 ≈ 44.48m
+      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(44.48)
     })
 
     it('uses total length as resolution when line is shorter than input resolution', () => {
@@ -135,8 +132,8 @@ describe('ElevationProfile', () => {
       const result = getPitchData(profileGeometry, 50)
 
       // Resolution should equal the total length since numSegments = ceil(11/50) = 1
-      // actualResolution = 11/1 = 11m
-      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(11.1, 0)
+      // actualResolution = 11/1 ≈ 11.12m
+      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(11.12)
       expect(result.pitchCalculationResolutionInMeters).toBeLessThanOrEqual(50)
     })
 
@@ -156,7 +153,7 @@ describe('ElevationProfile', () => {
       // With evenly divided chunks, no chunks should be skipped
       // The max pitch should be calculated from all segments
       expect(result.maxPitchInPercent).toBeGreaterThan(0)
-      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(20.15, 1)
+      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(20.14)
     })
 
     it('returns null pitch data for very short lines', () => {
@@ -172,7 +169,7 @@ describe('ElevationProfile', () => {
 
       // Lines shorter than half the resolution should return null pitch data
       // because elevation data resolution makes pitch calculations unreliable
-      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(1.11, 1)
+      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(1.11)
       expect(result.maxPitchInPercent).toBeNull()
       expect(result.averagePitchInPercent).toBeNull()
       expect(result.overallPitchInPercent).toBeNull()
@@ -191,7 +188,7 @@ describe('ElevationProfile', () => {
       const result = getPitchData(profileGeometry, 25)
 
       // Lines at or above half the resolution should calculate pitch data
-      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(16.7, 0)
+      expect(result.pitchCalculationResolutionInMeters).toBeCloseTo(16.68)
       expect(result.maxPitchInPercent).not.toBeNull()
       expect(result.averagePitchInPercent).not.toBeNull()
       expect(result.overallPitchInPercent).not.toBeNull()
@@ -211,13 +208,13 @@ describe('ElevationProfile', () => {
       // With 20m resolution, there should be 12 points
       const result = extractPointsForElevationProfile(geometry, 20)
 
-      expect(result.coordinates.length).toEqual(12)
-      expect(result.coordinates[0]).toEqual([
+      expect(result.geometry.coordinates.length).toEqual(12)
+      expect(result.geometry.coordinates[0]).toEqual([
         11.177452968770694, 47.312650638218656,
       ])
-      expect(result.coordinates[result.coordinates.length - 1]).toEqual([
-        11.175409464719593, 47.31138883724759,
-      ])
+      expect(
+        result.geometry.coordinates[result.geometry.coordinates.length - 1],
+      ).toEqual([11.175409464719593, 47.31138883724759])
     })
 
     it('handles points that already have elevation', () => {
@@ -232,9 +229,9 @@ describe('ElevationProfile', () => {
       const result = extractPointsForElevationProfile(geometry, 20)
 
       // Should still work properly, returning 2D points regardless of input dimension
-      expect(result.coordinates.length).toBeGreaterThan(1)
-      expect(result.coordinates[0].length).toBe(2) // Should always return 2D points
-      expect(result.coordinates[0]).toEqual([
+      expect(result.geometry.coordinates.length).toBeGreaterThan(1)
+      expect(result.geometry.coordinates[0].length).toBe(2) // Should always return 2D points
+      expect(result.geometry.coordinates[0]).toEqual([
         11.177452968770694, 47.312650638218656,
       ])
     })
@@ -331,7 +328,12 @@ describe('ElevationProfile', () => {
         type: 'Feature',
         geometry: {
           type: 'MultiLineString',
-          coordinates: [[[0, 0, 100], [1, 1, 200]]],
+          coordinates: [
+            [
+              [0, 0, 100],
+              [1, 1, 200],
+            ],
+          ],
         },
         properties: {
           type: FeatureType.Lift,
@@ -395,7 +397,8 @@ describe('ElevationProfile', () => {
               1574, 1572, 1571, 1571, 1572, 1572, 1573, 1574, 1573, 1572, 1572,
               1573, 1575, 1576, 1577, 1580, 1583, 1584, 1586,
             ],
-            resolution: 25,
+            resolution: 24.737575778032642,
+            targetResolution: 25,
           },
           sources: [],
           websites: [],
@@ -472,7 +475,255 @@ describe('ElevationProfile', () => {
       } as RunFeature
 
       const result = getRunElevationData(runFeature)
-      expect(result?.maxPitchInPercent).toBeCloseTo(0.12, 2)
+      expect(result?.maxPitchInPercent).toBeCloseTo(0.12)
+    })
+  })
+
+  describe('lineChunkPatched', () => {
+    it('chunks a line into evenly spaced segments', () => {
+      const geometry: GeoJSON.LineString = {
+        type: 'LineString',
+        coordinates: [
+          [0, 0, 100],
+          [0, 0.001, 110], // ~111m distance
+          [0, 0.002, 105], // ~111m distance
+        ],
+      }
+
+      const result = lineChunkPatched(geometry, 50)
+
+      // Total length ~222m, with 50m input resolution:
+      // numSegments = ceil(222/50) = 5, actualResolution = 222/5 ≈ 44.48m
+      expect(result.resolutionInMeters).toBeCloseTo(44.48)
+      expect(result.geometry.length).toBe(5)
+    })
+
+    it('drops very short last segment caused by floating point precision issues', () => {
+      // This geometry used to produce a 0-length last segment
+      const geometry: GeoJSON.LineString = {
+        type: 'LineString',
+        coordinates: [
+          [11.0796655, 47.4527256, 1692.2],
+          [11.079720619903608, 47.45294351099136, 1681.8],
+          [11.079741829533312, 47.4531647479081, 1668.6],
+          [11.079727503541202, 47.453383892073894, 1656.7],
+          [11.07965005139028, 47.453599318647775, 1644.3],
+          [11.079572598604779, 47.4538147451695, 1630.9],
+          [11.07942834590789, 47.45401183160125, 1618.7],
+          [11.079261771477254, 47.45420278959679, 1607.3],
+          [11.079114389973567, 47.454399266146474, 1594.7],
+          [11.0790705, 47.45461691834462, 1583.1],
+          [11.079181898893397, 47.45481861566543, 1576.6],
+          [11.079441578857713, 47.45494597233321, 1569.5],
+          [11.079759061257176, 47.454999538815876, 1562],
+          [11.080078284221905, 47.4550501436389, 1556.1],
+          [11.080397507801036, 47.45510074757592, 1552.5],
+          [11.080713989344984, 47.45515789593482, 1548.1],
+          [11.081008027508169, 47.45525121278351, 1543.2],
+          [11.081212874246143, 47.455416412781105, 1540.9],
+          [11.081238270576348, 47.455636585144894, 1535.5],
+          [11.081208499760809, 47.45585723881769, 1526.8],
+          [11.081175991164459, 47.456077847750485, 1510.4],
+          [11.081099444790018, 47.456292146692356, 1497.9],
+          [11.080996819007606, 47.45650270883295, 1484.3],
+          [11.080897169545302, 47.45671391641284, 1472.4],
+          [11.080799550285963, 47.45692556428702, 1456.4],
+          [11.080701930240755, 47.457137212078344, 1443.9],
+          [11.08059047871202, 47.4573452579998, 1434.7],
+          [11.080452900000004, 47.45754649999998, 1427.4],
+        ],
+      }
+
+      const result = lineChunkPatched(geometry, 25)
+
+      // Verify that all segments have correct length
+      for (const chunk of result.geometry) {
+        const chunkLength = length(
+          { type: 'Feature', geometry: chunk, properties: {} },
+          { units: 'meters' },
+        )
+        expect(chunkLength).toBeCloseTo(result.resolutionInMeters)
+      }
+    })
+
+    it('preserves the exact last point from the original geometry', () => {
+      // This geometry had a split last point that was different from the input last point
+      const geometry: GeoJSON.LineString = {
+        type: 'LineString',
+        coordinates: [
+          [11.1215994, 47.466431, 886.6],
+          [11.118092699999998, 47.4702057, 768.5],
+        ],
+      }
+
+      const result = lineChunkPatched(geometry, 25)
+
+      // The last point of the last chunk should be exactly the same as the original last point
+      const lastChunk = result.geometry[result.geometry.length - 1]
+      const lastPoint = lastChunk.coordinates[lastChunk.coordinates.length - 1]
+      const originalLastPoint =
+        geometry.coordinates[geometry.coordinates.length - 1]
+
+      expect(lastPoint[0]).toBe(originalLastPoint[0])
+      expect(lastPoint[1]).toBe(originalLastPoint[1])
+      expect(lastPoint[2]).toBe(originalLastPoint[2])
+    })
+
+    it('strips elevation from non-original points', () => {
+      const geometry: GeoJSON.LineString = {
+        type: 'LineString',
+        coordinates: [
+          [0, 0, 100],
+          [0, 0.001, 110], // ~111m distance
+          [0, 0.002, 120], // ~111m distance
+        ],
+      }
+
+      const result = lineChunkPatched(geometry, 50)
+
+      // Check that interpolated points (not from original geometry) don't have elevation
+      for (const chunk of result.geometry) {
+        for (const point of chunk.coordinates) {
+          const key = `${point[0]},${point[1]}`
+          const originalKey = geometry.coordinates.some(
+            (c) => `${c[0]},${c[1]}` === key,
+          )
+
+          if (!originalKey) {
+            // Non-original points should not have elevation (should be 2D)
+            expect(point.length).toBe(2)
+          } else {
+            // Original points should still have elevation
+            expect(point.length).toBe(3)
+          }
+        }
+      }
+    })
+
+    it('handles very short lines', () => {
+      const geometry: GeoJSON.LineString = {
+        type: 'LineString',
+        coordinates: [
+          [0, 0, 100],
+          [0, 0.00001, 101], // ~1.11m distance
+        ],
+      }
+
+      const result = lineChunkPatched(geometry, 25)
+
+      // Should create a single chunk for very short lines
+      expect(result.geometry.length).toBe(1)
+      expect(result.resolutionInMeters).toBeCloseTo(1.11)
+    })
+
+    it('handles lines with exact multiples of resolution', () => {
+      const geometry: GeoJSON.LineString = {
+        type: 'LineString',
+        coordinates: [
+          [0, 0, 100],
+          [0, 0.0009, 110],
+        ],
+      }
+
+      const result = lineChunkPatched(geometry, 50)
+
+      // The actual distance is calculated and divided evenly
+      // Resolution should be <= 50m
+      expect(result.resolutionInMeters).toBeLessThanOrEqual(50)
+      expect(result.geometry.length).toBeGreaterThanOrEqual(1)
+    })
+
+    it('returns first and last points matching original geometry', () => {
+      const geometry: GeoJSON.LineString = {
+        type: 'LineString',
+        coordinates: [
+          [11.177425600412874, 47.31265682344346, 100],
+          [11.177224899122194, 47.312533118812354, 110],
+          [11.176823496540862, 47.31229807921545, 105],
+        ],
+      }
+
+      const result = lineChunkPatched(geometry, 25)
+
+      // First point of first chunk should match original first point
+      const firstPoint = result.geometry[0].coordinates[0]
+      expect(firstPoint[0]).toBe(geometry.coordinates[0][0])
+      expect(firstPoint[1]).toBe(geometry.coordinates[0][1])
+      expect(firstPoint[2]).toBe(geometry.coordinates[0][2])
+
+      // Last point of last chunk should match original last point
+      const lastChunk = result.geometry[result.geometry.length - 1]
+      const lastPoint = lastChunk.coordinates[lastChunk.coordinates.length - 1]
+      const originalLastPoint =
+        geometry.coordinates[geometry.coordinates.length - 1]
+      expect(lastPoint[0]).toBe(originalLastPoint[0])
+      expect(lastPoint[1]).toBe(originalLastPoint[1])
+      expect(lastPoint[2]).toBe(originalLastPoint[2])
+    })
+
+    it('calculates resolution that is less than or equal to requested resolution', () => {
+      const geometry: GeoJSON.LineString = {
+        type: 'LineString',
+        coordinates: [
+          [0, 0, 100],
+          [0, 0.0015, 110], // ~166.7m distance
+        ],
+      }
+
+      const result = lineChunkPatched(geometry, 50)
+
+      // Resolution should never exceed the requested minimum resolution
+      expect(result.resolutionInMeters).toBeLessThanOrEqual(50)
+    })
+
+    it('handles zero-length segments in original geometry', () => {
+      const geometry: GeoJSON.LineString = {
+        type: 'LineString',
+        coordinates: [
+          [0, 0, 100],
+          [0, 0, 100], // Duplicate point (0 length segment)
+          [0, 0.001, 110],
+        ],
+      }
+
+      const result = lineChunkPatched(geometry, 25)
+
+      // Should still work and produce valid chunks
+      expect(result.geometry.length).toBeGreaterThan(0)
+      expect(result.resolutionInMeters).toBeGreaterThan(0)
+    })
+
+    it('preserves all original points that fall on chunk boundaries', () => {
+      const geometry: GeoJSON.LineString = {
+        type: 'LineString',
+        coordinates: [
+          [0, 0, 100],
+          [0, 0.0005, 105], // ~55.6m - should be close to a chunk boundary with 50m resolution
+          [0, 0.001, 110],
+        ],
+      }
+
+      const result = lineChunkPatched(geometry, 50)
+
+      // Count how many original points are preserved in the chunks
+      let preservedOriginalPoints = 0
+      for (const chunk of result.geometry) {
+        for (const point of chunk.coordinates) {
+          if (
+            geometry.coordinates.some(
+              (c) => c[0] === point[0] && c[1] === point[1],
+            )
+          ) {
+            preservedOriginalPoints++
+          }
+        }
+      }
+
+      // All original points should be present somewhere in the chunks
+      // (Note: points may appear multiple times if they're at chunk boundaries)
+      expect(preservedOriginalPoints).toBeGreaterThanOrEqual(
+        geometry.coordinates.length,
+      )
     })
   })
 })
