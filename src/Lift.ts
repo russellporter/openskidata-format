@@ -45,6 +45,7 @@ export type Access = 'private' | null
  * @property {boolean | null} detachable - Whether the lift has detachable grips. Derived from the OpenStreetMap aerialway:detachable tag.
  * @property {boolean | null} bubble - Whether the lift has bubbles/covers to protect from weather. Derived from the OpenStreetMap aerialway:bubble tag.
  * @property {boolean | null} heating - Whether the lift has heated carriers/seats. Derived from the OpenStreetMap aerialway:heating tag.
+ * @property {boolean | null} tunnel - Whether the lift passes through a tunnel, derived from the OpenStreetMap "tunnel" tag. True for any tunnel value (e.g. "yes", "avalanche_protector", "building_passage"), null if untagged.
  * @property {LiftStationSpotFeature[]} stations - Lift station spot features associated with this lift.
  * @property {SkiAreaSummaryFeature[]} skiAreas - Ski areas this lift is a part of.
  * @property {Source[]} sources - Data sources for the feature.
@@ -69,6 +70,7 @@ export type LiftProperties = {
   detachable: boolean | null
   bubble: boolean | null
   heating: boolean | null
+  tunnel: boolean | null
   stations: LiftStationSpotFeature[]
   skiAreas: SkiAreaSummaryFeature[]
   sources: Source[]
