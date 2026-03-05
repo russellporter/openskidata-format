@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "build": "rm -rf dist/ && tsc",
+    "prepare": "npm run build",
     "release": "npm run-script build && npm publish",
     "test": "jest",
     "test:watch": "jest --watch",

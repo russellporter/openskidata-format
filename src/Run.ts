@@ -53,6 +53,7 @@ export type RunFeature = GeoJSON.Feature<RunGeometry, RunProperties>
  * @property {boolean | null} patrolled - Whether the run is patrolled by ski patrol, derived from the OpenStreetMap "piste:patrolled" or "patrolled" tag.
  * @property {boolean | null} snowmaking - Whether the run has its operation secured through snowmaking, derived from the OpenStreetMap "piste:snowmaking" tag.
  * @property {boolean | null} snowfarming - Whether the run has its early season operation secured through snowfarming (storing snow from previous season), derived from the OpenStreetMap "piste:snowfarming" tag.
+ * @property {boolean | null} tunnel - Whether the run passes through a tunnel, derived from the OpenStreetMap "tunnel" tag. True for any tunnel value (e.g. "yes", "avalanche_protector", "building_passage"), null if untagged.
  * @property {RunGrooming | null} grooming - Grooming status/type of the run, derived from the OpenStreetMap "piste:grooming" tag. If not specified explicitly, for difficulties "expert", "freeride", and "extreme", grooming is assumed to be "backcountry".
  * @property {SkiAreaSummaryFeature[]} skiAreas - Ski areas this run belongs to. Derived from the OpenStreetMap site=piste relation or landuse=winter_sports area and proximity to ski area features. Runs with "backcountry" grooming are not associated with ski areas unless they have a "piste:patrolled=yes" or "patrolled=yes" OpenStreetMap tag, or are part of a "site=piste" ski area relation.
  * @property {ElevationProfile | null} elevationProfile - Elevation profile of the run, only available for runs with LineString geometry.
@@ -78,6 +79,7 @@ export type RunProperties = {
   patrolled: boolean | null
   snowmaking: boolean | null
   snowfarming: boolean | null
+  tunnel: boolean | null
   grooming: RunGrooming | null
   skiAreas: SkiAreaSummaryFeature[]
   elevationProfile: ElevationProfile | null
