@@ -275,6 +275,7 @@ describe('ElevationProfile', () => {
           grooming: null,
           websites: [],
           wikidataID: null,
+          tunnel: null,
           places: [],
         },
       }
@@ -314,6 +315,7 @@ describe('ElevationProfile', () => {
           grooming: null,
           websites: [],
           wikidataID: null,
+          tunnel: null,
           places: [],
         },
       }
@@ -357,6 +359,7 @@ describe('ElevationProfile', () => {
           stations: [],
           websites: [],
           wikidataID: null,
+          tunnel: null,
           places: [],
         },
       }
@@ -403,6 +406,7 @@ describe('ElevationProfile', () => {
           sources: [],
           websites: [],
           wikidataID: null,
+          tunnel: null,
           places: [],
         },
         geometry: {
