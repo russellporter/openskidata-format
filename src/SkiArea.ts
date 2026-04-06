@@ -6,6 +6,7 @@ import { RunDifficultyConvention } from './RunDifficultyConvention'
 import { SnowCoverHistory } from './SnowCoverHistory'
 import { Source } from './Source'
 import { Status } from './Status'
+import { ViewportHint } from './ViewportHint'
 
 /**
  * A ski area feature is derived from several sources:
@@ -58,6 +59,7 @@ export type SkiAreaProperties = SkiAreaSummaryProperties & {
   websites: string[]
   wikidataID: string | null
   places: Place[]
+  viewportHint: ViewportHint
 }
 
 export type SkiAreaSummaryProperties = {

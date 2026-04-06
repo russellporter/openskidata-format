@@ -7,6 +7,7 @@ import { Source } from './Source'
 import { LiftStationPosition, LiftStationSpotFeature } from './Spot'
 import { Status } from './Status'
 import { exhaustiveMatchingGuard } from './util/exhaustiveMatchingGuard'
+import { ViewportHint } from './ViewportHint'
 
 export type LiftFeature = GeoJSON.Feature<LiftGeometry, LiftProperties>
 
@@ -78,6 +79,7 @@ export type LiftProperties = {
   websites: string[]
   wikidataID: string | null
   places: Place[]
+  viewportHint: ViewportHint
 }
 
 export enum LiftType {

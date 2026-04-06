@@ -3,6 +3,7 @@ import { FeatureType } from './FeatureType'
 import { Place } from './Place'
 import { SkiAreaSummaryFeature } from './SkiArea'
 import { Source } from './Source'
+import { ViewportHint } from './ViewportHint'
 
 /**
  * A GeoJSON feature representing a spot (point of interest) in or around a ski area.
@@ -43,6 +44,7 @@ export type SpotBaseProperties = {
   skiAreas: SkiAreaSummaryFeature[]
   sources: Source[]
   places: Place[]
+  viewportHint: ViewportHint
 }
 
 /**

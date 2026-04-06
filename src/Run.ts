@@ -13,6 +13,7 @@ import { SnowCoverHistory } from './SnowCoverHistory'
 import { Source } from './Source'
 import { Status } from './Status'
 import { exhaustiveMatchingGuard } from './util/exhaustiveMatchingGuard'
+import { ViewportHint } from './ViewportHint'
 
 export type RunGeometry = GeoJSON.LineString | GeoJSON.Polygon
 
@@ -88,6 +89,7 @@ export type RunProperties = {
   wikidataID: string | null
   places: Place[]
   snowCoverHistory?: SnowCoverHistory
+  viewportHint: ViewportHint
 }
 
 export enum RunUse {
