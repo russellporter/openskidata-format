@@ -1,9 +1,10 @@
+import distance from '@turf/distance'
 import { ElevationData, getElevationData } from './ElevationProfile'
 import { FeatureType } from './FeatureType'
 import { Place } from './Place'
 import { SkiAreaSummaryFeature } from './SkiArea'
 import { Source } from './Source'
-import { LiftStationSpotFeature } from './Spot'
+import { LiftStationPosition, LiftStationSpotFeature } from './Spot'
 import { Status } from './Status'
 import { exhaustiveMatchingGuard } from './util/exhaustiveMatchingGuard'
 
@@ -113,16 +114,57 @@ export function getLiftElevationData(
 
   const elevationData = getElevationData(geometry)
   const durationInSeconds = feature.properties.duration
+  const terminalDistances = getTerminalStationDistances(feature)
+  const inclinedLength =
+    terminalDistances?.inclinedLengthInMeters ??
+    elevationData.inclinedLengthInMeters
+  const verticalLength =
+    terminalDistances?.verticalInMeters ?? elevationData.verticalInMeters
 
   return {
     ...elevationData,
     speedInMetersPerSecond: durationInSeconds
-      ? elevationData.inclinedLengthInMeters / durationInSeconds
+      ? inclinedLength / durationInSeconds
       : null,
     verticalSpeedInMetersPerSecond: durationInSeconds
-      ? elevationData.verticalInMeters / durationInSeconds
+      ? verticalLength / durationInSeconds
       : null,
   }
+}
+
+function getTerminalStationDistances(
+  feature: LiftFeature,
+): { inclinedLengthInMeters: number; verticalInMeters: number } | null {
+  const stations = feature.properties.stations
+  const topStation = stations.find(
+    (s) => s.properties.position === LiftStationPosition.Top,
+  )
+  const bottomStation = stations.find(
+    (s) => s.properties.position === LiftStationPosition.Bottom,
+  )
+
+  if (!topStation || !bottomStation) {
+    return null
+  }
+
+  const topCoords = topStation.geometry.coordinates
+  const bottomCoords = bottomStation.geometry.coordinates
+
+  if (topCoords.length < 3 || bottomCoords.length < 3) {
+    return null
+  }
+
+  const horizontalDistanceInMeters = distance(
+    topStation.geometry,
+    bottomStation.geometry,
+    { units: 'meters' },
+  )
+  const verticalInMeters = Math.abs(topCoords[2] - bottomCoords[2])
+  const inclinedLengthInMeters = Math.sqrt(
+    Math.pow(horizontalDistanceInMeters, 2) + Math.pow(verticalInMeters, 2),
+  )
+
+  return { inclinedLengthInMeters, verticalInMeters }
 }
 
 export function getFormattedLiftType(liftType: LiftType): string {
