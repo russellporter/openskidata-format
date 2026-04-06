@@ -1,15 +1,49 @@
 name: Release package
 
 on:
+  push:
+    branches:
+      - master
   release:
     types: [created]
 
 permissions:
-  id-token: write  # Required for OIDC
-  contents: read
+  id-token: write  # Required for OIDC npm publish
+  contents: write  # Required to create GitHub releases and tags
 
 jobs:
+  create-release:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    outputs:
+      version-changed: ${{ steps.check.outputs.changed }}
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check if version changed
+        id: check
+        run: |
+          CURRENT=$(node -p "require('./package.json').version")
+          PREVIOUS=$(git show HEAD~1:package.json | node -p "JSON.parse(require('fs').readFileSync(0,'utf8')).version" 2>/dev/null || echo "")
+          echo "version=$CURRENT" >> "$GITHUB_OUTPUT"
+          if [ "$CURRENT" != "$PREVIOUS" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub release
+        if: steps.check.outputs.changed == 'true'
+        run: gh release create "v${{ steps.check.outputs.version }}" --generate-notes --title "v${{ steps.check.outputs.version }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
   build:
+    if: always() && (github.event_name == 'release' || needs.create-release.outputs.version-changed == 'true')
+    needs: [create-release]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,7 +54,9 @@ jobs:
       - run: npm run build
 
   publish-npm:
-    needs: build
+    # Authentication uses OIDC (id-token: write), no NODE_AUTH_TOKEN needed
+    if: always() && (github.event_name == 'release' || needs.create-release.outputs.version-changed == 'true')
+    needs: [create-release, build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
