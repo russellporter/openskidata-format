@@ -201,18 +201,18 @@ export function getFormattedLiftType(liftType: LiftType): string {
 }
 
 export function getLiftColor(status: Status): string {
-  const BRIGHT_RED_COLOR = 'hsl(0, 82%, 42%)'
-  const DIM_RED_COLOR = 'hsl(0, 53%, 42%)'
+  const brightRedColor = 'hsl(0, 82%, 42%)'
+  const dimRedColor = 'hsl(0, 53%, 42%)'
 
   switch (status) {
     case Status.Disused:
     case Status.Abandoned:
-      return DIM_RED_COLOR
+      return dimRedColor
     case Status.Proposed:
     case Status.Planned:
     case Status.Construction:
     case Status.Operating:
-      return BRIGHT_RED_COLOR
+      return brightRedColor
     default:
       return exhaustiveMatchingGuard(status)
   }

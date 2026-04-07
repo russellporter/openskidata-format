@@ -1,5 +1,6 @@
 import { FeatureType } from './FeatureType';
 import { getLiftElevationData, LiftFeature, LiftType, getFormattedLiftType, getLiftColor } from './Lift';
+import { mockViewportHint } from './testUtils';
 import { LiftStationPosition, LiftStationSpotFeature, SpotType } from './Spot';
 import { Status } from './Status';
 
@@ -41,6 +42,7 @@ function makeLiftFeature(overrides: {
       websites: [],
       wikidataID: null,
       places: [],
+      viewportHint: mockViewportHint(),
     },
   }
 }
@@ -64,6 +66,7 @@ function makeStation(
       skiAreas: [],
       sources: [],
       places: [],
+      viewportHint: mockViewportHint(),
     },
   }
 }

@@ -83,11 +83,14 @@ export function computeViewportHint(
   }
 
   // Uphill bearing = downhill + 180°; null if no elevation variation found.
+  // A small offset is added so the camera is angled slightly to the side of the fall line,
+  // giving a better 3-D profile of the terrain rather than pointing straight uphill.
+  const bearingSideOffsetDeg = 30
   let mapBearing: number | null = null
   if (sumSin !== 0 || sumCos !== 0) {
     const dominantDownhill = (Math.atan2(sumSin, sumCos) * 180) / Math.PI
     const normalizedDownhill = ((dominantDownhill % 360) + 360) % 360
-    mapBearing = (normalizedDownhill + 180) % 360
+    mapBearing = (normalizedDownhill + 180 + bearingSideOffsetDeg) % 360
   }
 
   const metersPerDeg = 111320

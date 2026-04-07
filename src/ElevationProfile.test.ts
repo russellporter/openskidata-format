@@ -10,6 +10,7 @@ import { getLiftElevationData, LiftFeature, LiftType } from './Lift'
 import { getRunElevationData, RunDifficulty, RunFeature, RunUse } from './Run'
 import { RunDifficultyConvention } from './RunDifficultyConvention'
 import { Status } from './Status'
+import { mockViewportHint } from './testUtils'
 
 describe('ElevationProfile', () => {
   describe('getAscentAndDescent', () => {
@@ -277,6 +278,7 @@ describe('ElevationProfile', () => {
           wikidataID: null,
           tunnel: null,
           places: [],
+          viewportHint: mockViewportHint(),
         },
       }
 
@@ -317,6 +319,7 @@ describe('ElevationProfile', () => {
           wikidataID: null,
           tunnel: null,
           places: [],
+          viewportHint: mockViewportHint(),
         },
       }
 
@@ -361,6 +364,7 @@ describe('ElevationProfile', () => {
           wikidataID: null,
           tunnel: null,
           places: [],
+          viewportHint: mockViewportHint(),
         },
       }
 
@@ -408,6 +412,7 @@ describe('ElevationProfile', () => {
           wikidataID: null,
           tunnel: null,
           places: [],
+          viewportHint: mockViewportHint(),
         },
         geometry: {
           type: 'LineString',

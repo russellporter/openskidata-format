@@ -1,5 +1,6 @@
 import { RunDifficulty, RunUse } from "./Run";
 import { getEstimatedRunDifficulty, getSlopeGradingScale } from "./SlopeGradingScale";
+import { mockViewportHint } from "./testUtils";
 
 describe("getEstimatedRunDifficulty", () => {
   it("should return null for steepness below minimum threshold", () => {
@@ -30,6 +31,7 @@ describe("getEstimatedRunDifficulty", () => {
         wikidataID: null,
         tunnel: null,
         places: [],
+        viewportHint: mockViewportHint(),
       },
     });
 
@@ -64,6 +66,7 @@ describe("getEstimatedRunDifficulty", () => {
         wikidataID: null,
         tunnel: null,
         places: [],
+        viewportHint: mockViewportHint(),
       },
     });
 
@@ -102,6 +105,7 @@ describe("getEstimatedRunDifficulty", () => {
         wikidataID: null,
         tunnel: null,
         places: [],
+        viewportHint: mockViewportHint(),
       },
     });
 
@@ -138,6 +142,7 @@ describe("getEstimatedRunDifficulty", () => {
         wikidataID: null,
         tunnel: null,
         places: [],
+        viewportHint: mockViewportHint(),
       },
     });
 
