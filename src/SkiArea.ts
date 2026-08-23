@@ -3,6 +3,7 @@ import { LiftType } from './Lift'
 import { Place } from './Place'
 import { RunDifficulty } from './Run'
 import { RunDifficultyConvention } from './RunDifficultyConvention'
+import { SkiPassMembership } from './SkiPass'
 import { SnowCoverHistory } from './SnowCoverHistory'
 import { Source } from './Source'
 import { Status } from './Status'
@@ -51,6 +52,7 @@ export type SkiAreaSummaryFeature = GeoJSON.Feature<
  * @property {string[]} websites - Official website(s) of the ski area. Derived from the OpenStreetMap website tag and Skimap.org data.
  * @property {string | null} wikidataID - Wikidata identifier. Derived from the OpenStreetMap wikidata tag.
  * @property {Place[]} places - Geographic places this ski area is within (e.g., city, region, country). Derived from reverse geocoding.
+ * @property {SkiPassMembership[]} skiPasses - Multi-resort season passes this ski area is on. Empty if it is on none.
  */
 export type SkiAreaProperties = SkiAreaSummaryProperties & {
   sources: Source[]
@@ -60,6 +62,7 @@ export type SkiAreaProperties = SkiAreaSummaryProperties & {
   wikidataID: string | null
   places: Place[]
   viewportHint: ViewportHint
+  skiPasses: SkiPassMembership[]
 }
 
 export type SkiAreaSummaryProperties = {

@@ -14,10 +14,9 @@ When releasing a new version:
    - Minor version (0.X.0): New features, backwards compatible
    - Patch version (0.0.X): Bug fixes, backwards compatible
 2. Commit all changes including the version bump
-3. Push to master
-4. Create a GitHub release with tag `vX.Y.Z` (e.g., `v6.0.0`)
-5. The GitHub Actions workflow will automatically build and publish to npm
-6. After the format is released, update openskidata-processor and openskimap.org repos to use the new version
+3. Push to master. The GitHub Actions workflow detects the changed version, creates the `vX.Y.Z`
+   tag and GitHub release, and publishes to npm
+4. After the format is released, update openskidata-processor and openskimap.org repos to use the new version
 
 ## Code Style Guidelines
 - **TypeScript**: Strict mode enabled with ES2020 target
