@@ -1,6 +1,6 @@
 {
   "name": "openskidata-format",
-  "version": "14.0.0",
+  "version": "15.0.0",
   "description": "Data format for OpenSkiMap.org",
   "type": "module",
   "main": "./dist/index.js",
