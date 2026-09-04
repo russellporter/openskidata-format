@@ -1,4 +1,4 @@
-import { getRunDifficultyConvention, RunDifficultyConvention } from "./RunDifficultyConvention";
+import { getRunDifficultyConvention, RunDifficultyConvention } from "./RunDifficultyConvention.js";
 
 describe("getRunDifficultyConvention", () => {
   it("should return JAPAN for locations in Japan", () => {

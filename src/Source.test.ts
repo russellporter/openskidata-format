@@ -3,7 +3,7 @@ import {
   getSourceURL,
   getStormSkiingChartCSVURL,
   SourceType,
-} from './Source'
+} from './Source.js'
 
 describe('getSourceURL', () => {
   it('links to an OpenStreetMap element', () => {

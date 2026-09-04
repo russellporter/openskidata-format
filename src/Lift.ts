@@ -1,13 +1,14 @@
+import * as GeoJSON from 'geojson'
 import distance from '@turf/distance'
-import { ElevationData, getElevationData } from './ElevationProfile'
-import { FeatureType } from './FeatureType'
-import { Place } from './Place'
-import { SkiAreaSummaryFeature } from './SkiArea'
-import { Source } from './Source'
-import { LiftStationPosition, LiftStationSpotFeature } from './Spot'
-import { Status } from './Status'
-import { exhaustiveMatchingGuard } from './util/exhaustiveMatchingGuard'
-import { ViewportHint } from './ViewportHint'
+import { ElevationData, getElevationData } from './ElevationProfile.js'
+import { FeatureType } from './FeatureType.js'
+import { Place } from './Place.js'
+import { SkiAreaSummaryFeature } from './SkiArea.js'
+import { Source } from './Source.js'
+import { LiftStationPosition, LiftStationSpotFeature } from './Spot.js'
+import { Status } from './Status.js'
+import { exhaustiveMatchingGuard } from './util/exhaustiveMatchingGuard.js'
+import { ViewportHint } from './ViewportHint.js'
 
 export type LiftFeature = GeoJSON.Feature<LiftGeometry, LiftProperties>
 

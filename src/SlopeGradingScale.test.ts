@@ -1,6 +1,6 @@
-import { RunDifficulty, RunUse } from "./Run";
-import { getEstimatedRunDifficulty, getSlopeGradingScale } from "./SlopeGradingScale";
-import { mockViewportHint } from "./testUtils";
+import { RunDifficulty, RunUse } from "./Run.js";
+import { getEstimatedRunDifficulty, getSlopeGradingScale } from "./SlopeGradingScale.js";
+import { mockViewportHint } from "./testUtils.js";
 
 describe("getEstimatedRunDifficulty", () => {
   it("should return null for steepness below minimum threshold", () => {

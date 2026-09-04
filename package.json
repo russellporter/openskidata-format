@@ -2,19 +2,32 @@
   "name": "openskidata-format",
   "version": "14.0.0",
   "description": "Data format for OpenSkiMap.org",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "build": "rm -rf dist/ && tsc",
     "prepare": "npm run build",
-    "release": "npm run-script build && npm publish",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "release": "npm run build && npm publish",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check-types": "tsc --project tsconfig.typecheck.json"
   },
   "repository": {
     "type": "git",
@@ -26,20 +39,19 @@
     "url": "https://github.com/russellporter/openskidata-format/issues"
   },
   "homepage": "https://github.com/russellporter/openskidata-format#readme",
-  "devDependencies": {
-    "@types/geojson": "^7946.0.16",
-    "@types/jest": "^30.0.0",
-    "jest": "^30.2.0",
-    "ts-jest": "^29.4.6",
-    "typescript": "^5.9.3"
-  },
   "dependencies": {
-    "@turf/boolean-point-in-polygon": "^7.3.2",
-    "@turf/center": "^7.3.2",
-    "@turf/distance": "^7.3.2",
-    "@turf/helpers": "^7.3.2",
-    "@turf/length": "^7.3.2",
-    "@turf/line-chunk": "^7.3.2",
-    "tslib": "^2.8.1"
+    "@turf/boolean-point-in-polygon": "^7.4.0",
+    "@turf/center": "^7.4.0",
+    "@turf/distance": "^7.4.0",
+    "@turf/helpers": "^7.4.0",
+    "@turf/length": "^7.4.0",
+    "@turf/line-chunk": "^7.4.0",
+    "@types/geojson": "^7946.0.16"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "prettier": "^3.9.6",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.0"
   }
 }

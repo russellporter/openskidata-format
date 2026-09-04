@@ -1,4 +1,4 @@
-import { getMonthlySnowCover, SnowCoverHistory, MonthlySnowCoverHistory } from './SnowCoverHistory'
+import { getMonthlySnowCover, SnowCoverHistory, MonthlySnowCoverHistory } from './SnowCoverHistory.js'
 
 describe('getMonthlySnowCover', () => {
   it('should process daily data into monthly averages', () => {

@@ -1,16 +1,17 @@
+import * as GeoJSON from 'geojson'
 import length from '@turf/length'
 import {
   extractPointsForElevationProfile,
   getAscentAndDescent,
   getPitchData,
   lineChunkPatched,
-} from './ElevationProfile'
-import { FeatureType } from './FeatureType'
-import { getLiftElevationData, LiftFeature, LiftType } from './Lift'
-import { getRunElevationData, RunDifficulty, RunFeature, RunUse } from './Run'
-import { RunDifficultyConvention } from './RunDifficultyConvention'
-import { Status } from './Status'
-import { mockViewportHint } from './testUtils'
+} from './ElevationProfile.js'
+import { FeatureType } from './FeatureType.js'
+import { getLiftElevationData, LiftFeature, LiftType } from './Lift.js'
+import { getRunElevationData, RunDifficulty, RunFeature, RunUse } from './Run.js'
+import { RunDifficultyConvention } from './RunDifficultyConvention.js'
+import { Status } from './Status.js'
+import { mockViewportHint } from './testUtils.js'
 
 describe('ElevationProfile', () => {
   describe('getAscentAndDescent', () => {

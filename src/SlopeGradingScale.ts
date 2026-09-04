@@ -1,5 +1,5 @@
-import { RunDifficulty, RunFeature, RunUse } from "./Run";
-import { RunDifficultyConvention } from "./RunDifficultyConvention";
+import { RunDifficulty, RunFeature, RunUse } from "./Run.js";
+import { RunDifficultyConvention } from "./RunDifficultyConvention.js";
 
 /**
  * Represents a slope grading scale with steepness thresholds for different run types.

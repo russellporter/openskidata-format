@@ -1,9 +1,9 @@
 import * as GeoJSON from 'geojson'
-import { FeatureType } from './FeatureType'
-import { Place } from './Place'
-import { SkiAreaSummaryFeature } from './SkiArea'
-import { Source } from './Source'
-import { ViewportHint } from './ViewportHint'
+import { FeatureType } from './FeatureType.js'
+import { Place } from './Place.js'
+import { SkiAreaSummaryFeature } from './SkiArea.js'
+import { Source } from './Source.js'
+import { ViewportHint } from './ViewportHint.js'
 
 /**
  * A GeoJSON feature representing a spot (point of interest) in or around a ski area.

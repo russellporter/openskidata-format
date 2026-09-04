@@ -1,4 +1,4 @@
-import { LiftProperties, LiftType, getFormattedLiftType } from './Lift'
+import { LiftProperties, LiftType, getFormattedLiftType } from './Lift.js'
 
 export function getLiftNameAndType(properties: LiftProperties) {
   const name = properties.name

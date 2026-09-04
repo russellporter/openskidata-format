@@ -5,7 +5,9 @@
 - Test: `npm test`
 - Test with watch mode: `npm run test:watch`
 - Test with coverage: `npm run test:coverage`
-- Run single test: `npm test -- path/to/file.test.ts`
+- Run single test: `npx vitest run path/to/file.test.ts`
+- Type check (includes tests): `npm run check-types`
+- Format: `npm run format` / check only: `npm run format:check`
 
 ## Release Process
 When releasing a new version:
@@ -19,7 +21,10 @@ When releasing a new version:
 4. After the format is released, update openskidata-processor and openskimap.org repos to use the new version
 
 ## Code Style Guidelines
-- **TypeScript**: Strict mode enabled with ES2020 target
+- **TypeScript**: TypeScript 7 (native compiler), strict mode, ES2022 target
+- **Modules**: Pure ESM (`"type": "module"`, `moduleResolution: nodenext`). Relative imports
+  MUST carry an explicit `.js` extension, even from `.ts` sources.
+- **Testing**: Vitest with `globals: true` — no need to import `describe`/`it`/`expect`
 - **Naming**: PascalCase for types/interfaces/enums, camelCase for variables/functions
 - **Exports**: Each model in separate file with all exports in index.ts
 - **Types**: Explicit typing with null for optional values (not undefined)
@@ -29,8 +34,13 @@ When releasing a new version:
 - **Imports**: Group by external then internal, no relative path traversal
 - **GeoJSON**: Uses @types/geojson for typing
 - **Turf.js**: Used for geospatial operations
-- **Testing**: Place .test.ts files adjacent to source files
+- **Test placement**: Place .test.ts files adjacent to source files
 
 ## Repository Structure
 - `src/`: TypeScript source files with model definitions
-- `dist/`: Compiled JavaScript output
+- `dist/`: Compiled JavaScript output (the only thing published; `src/` is not shipped)
+
+## Packaging
+The package is ESM-only and uses an `exports` map, so consumers can only import the package
+root. The one extra exported subpath is `./package.json`, which openskidata-processor reads to
+report the format version. `src/testUtils.ts` is intentionally excluded from the build.

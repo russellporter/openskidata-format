@@ -4,16 +4,16 @@ import {
   ElevationProfile,
   getElevationData,
   getProfileGeometry,
-} from './ElevationProfile'
-import { FeatureType } from './FeatureType'
-import { Place } from './Place'
-import { RunDifficultyConvention } from './RunDifficultyConvention'
-import { SkiAreaSummaryFeature } from './SkiArea'
-import { SnowCoverHistory } from './SnowCoverHistory'
-import { Source } from './Source'
-import { Status } from './Status'
-import { exhaustiveMatchingGuard } from './util/exhaustiveMatchingGuard'
-import { ViewportHint } from './ViewportHint'
+} from './ElevationProfile.js'
+import { FeatureType } from './FeatureType.js'
+import { Place } from './Place.js'
+import { RunDifficultyConvention } from './RunDifficultyConvention.js'
+import { SkiAreaSummaryFeature } from './SkiArea.js'
+import { SnowCoverHistory } from './SnowCoverHistory.js'
+import { Source } from './Source.js'
+import { Status } from './Status.js'
+import { exhaustiveMatchingGuard } from './util/exhaustiveMatchingGuard.js'
+import { ViewportHint } from './ViewportHint.js'
 
 export type RunGeometry = GeoJSON.LineString | GeoJSON.Polygon
 

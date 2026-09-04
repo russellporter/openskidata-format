@@ -1,8 +1,9 @@
-import { FeatureType } from './FeatureType';
-import { getLiftElevationData, LiftFeature, LiftType, getFormattedLiftType, getLiftColor } from './Lift';
-import { mockViewportHint } from './testUtils';
-import { LiftStationPosition, LiftStationSpotFeature, SpotType } from './Spot';
-import { Status } from './Status';
+import * as GeoJSON from "geojson";
+import { FeatureType } from './FeatureType.js';
+import { getLiftElevationData, LiftFeature, LiftType, getFormattedLiftType, getLiftColor } from './Lift.js';
+import { mockViewportHint } from './testUtils.js';
+import { LiftStationPosition, LiftStationSpotFeature, SpotType } from './Spot.js';
+import { Status } from './Status.js';
 
 function makeLiftFeature(overrides: {
   coordinates?: GeoJSON.Position[];

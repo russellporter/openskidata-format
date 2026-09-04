@@ -1,4 +1,4 @@
-import { exhaustiveMatchingGuard } from './util/exhaustiveMatchingGuard'
+import { exhaustiveMatchingGuard } from './util/exhaustiveMatchingGuard.js'
 
 export enum SourceType {
   SKIMAP_ORG = 'skimap.org',

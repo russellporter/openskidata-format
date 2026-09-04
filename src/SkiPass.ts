@@ -1,4 +1,4 @@
-import { Source } from './Source'
+import { Source } from './Source.js'
 
 /** Stable identifier for a purchasable ski pass, e.g. "ikon-base". */
 export type SkiPassID = string
