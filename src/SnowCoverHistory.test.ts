@@ -1,4 +1,8 @@
-import { getMonthlySnowCover, SnowCoverHistory, MonthlySnowCoverHistory } from './SnowCoverHistory.js'
+import {
+  getMonthlySnowCover,
+  SnowCoverHistory,
+  MonthlySnowCoverHistory,
+} from './SnowCoverHistory.js'
 
 describe('getMonthlySnowCover', () => {
   it('should process daily data into monthly averages', () => {
@@ -6,14 +10,14 @@ describe('getMonthlySnowCover', () => {
       {
         year: 2023,
         days: [
-          [1, 80, 95],   // Jan 1
-          [15, 75, 90],  // Jan 15
-          [32, 60, 85],  // Feb 1
-          [46, 65, 80],  // Feb 15
-          [60, 40, 75],  // Mar 1
-          [74, 35, 70],  // Mar 15
-        ]
-      }
+          [1, 80, 95], // Jan 1
+          [15, 75, 90], // Jan 15
+          [32, 60, 85], // Feb 1
+          [46, 65, 80], // Feb 15
+          [60, 40, 75], // Mar 1
+          [74, 35, 70], // Mar 15
+        ],
+      },
     ]
 
     const result = getMonthlySnowCover(input)
@@ -42,12 +46,12 @@ describe('getMonthlySnowCover', () => {
     const input: SnowCoverHistory = [
       {
         year: 2022,
-        days: [[1, 50, 80]]
+        days: [[1, 50, 80]],
       },
       {
         year: 2023,
-        days: [[1, 60, 90]]
-      }
+        days: [[1, 60, 90]],
+      },
     ]
 
     const result = getMonthlySnowCover(input)
@@ -68,10 +72,10 @@ describe('getMonthlySnowCover', () => {
       {
         year: 2023,
         days: [
-          [1, 80, 0],   // No valid pixels
-          [15, 75, 100] // Full valid pixels
-        ]
-      }
+          [1, 80, 0], // No valid pixels
+          [15, 75, 100], // Full valid pixels
+        ],
+      },
     ]
 
     const result = getMonthlySnowCover(input)
@@ -86,18 +90,18 @@ describe('getMonthlySnowCover', () => {
       {
         year: 2023,
         days: [
-          [1, 80, 90],   // January
+          [1, 80, 90], // January
           [100, 40, 70], // April (day 100)
-          [335, 50, 80]  // December (day 335)
-        ]
-      }
+          [335, 50, 80], // December (day 335)
+        ],
+      },
     ]
 
     const result = getMonthlySnowCover(input)
 
     expect(result[0].months).toHaveLength(3)
-    expect(result[0].months[0][0]).toBe(1)  // January
-    expect(result[0].months[1][0]).toBe(4)  // April  
+    expect(result[0].months[0][0]).toBe(1) // January
+    expect(result[0].months[1][0]).toBe(4) // April
     expect(result[0].months[2][0]).toBe(12) // December
   })
 })

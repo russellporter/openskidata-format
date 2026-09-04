@@ -143,7 +143,6 @@ export enum RunColorValue {
   GREY = 'hsl(0, 0%, 35%)',
 }
 
-
 export function getRunElevationData(feature: RunFeature): ElevationData | null {
   const geometry = feature.geometry
   const profile = feature.properties.elevationProfile

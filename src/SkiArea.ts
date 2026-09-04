@@ -33,9 +33,7 @@ import { ViewportHint } from './ViewportHint.js'
 export type SkiAreaFeature = GeoJSON.Feature<SkiAreaGeometry, SkiAreaProperties>
 
 export type SkiAreaGeometry =
-  | GeoJSON.Point
-  | GeoJSON.Polygon
-  | GeoJSON.MultiPolygon
+  GeoJSON.Point | GeoJSON.Polygon | GeoJSON.MultiPolygon
 
 export type SkiAreaSummaryFeature = GeoJSON.Feature<
   SkiAreaGeometry,

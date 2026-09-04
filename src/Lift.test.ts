@@ -1,14 +1,24 @@
-import * as GeoJSON from "geojson";
-import { FeatureType } from './FeatureType.js';
-import { getLiftElevationData, LiftFeature, LiftType, getFormattedLiftType, getLiftColor } from './Lift.js';
-import { mockViewportHint } from './testUtils.js';
-import { LiftStationPosition, LiftStationSpotFeature, SpotType } from './Spot.js';
-import { Status } from './Status.js';
+import * as GeoJSON from 'geojson'
+import { FeatureType } from './FeatureType.js'
+import {
+  getLiftElevationData,
+  LiftFeature,
+  LiftType,
+  getFormattedLiftType,
+  getLiftColor,
+} from './Lift.js'
+import { mockViewportHint } from './testUtils.js'
+import {
+  LiftStationPosition,
+  LiftStationSpotFeature,
+  SpotType,
+} from './Spot.js'
+import { Status } from './Status.js'
 
 function makeLiftFeature(overrides: {
-  coordinates?: GeoJSON.Position[];
-  duration?: number | null;
-  stations?: LiftStationSpotFeature[];
+  coordinates?: GeoJSON.Position[]
+  duration?: number | null
+  stations?: LiftStationSpotFeature[]
 }): LiftFeature {
   return {
     type: 'Feature',
@@ -84,7 +94,10 @@ describe('Lift', () => {
 
     it('returns null when coordinates have no elevation', () => {
       const feature = makeLiftFeature({
-        coordinates: [[8.0, 46.0], [8.01, 46.05]],
+        coordinates: [
+          [8.0, 46.0],
+          [8.01, 46.05],
+        ],
       })
       expect(getLiftElevationData(feature)).toBeNull()
     })
@@ -120,10 +133,10 @@ describe('Lift', () => {
       // Geometry extends beyond the stations (extra approach at each end)
       const feature = makeLiftFeature({
         coordinates: [
-          [8.0, 46.0, 900],    // approach before bottom station
+          [8.0, 46.0, 900], // approach before bottom station
           [8.005, 46.01, 1000], // bottom station location
           [8.015, 46.04, 1500], // top station location
-          [8.02, 46.05, 1600],  // approach after top station
+          [8.02, 46.05, 1600], // approach after top station
         ],
         duration: 600,
         stations: [
@@ -159,8 +172,8 @@ describe('Lift', () => {
     it('falls back to geometry when stations have no elevation', () => {
       const featureWithStations = makeLiftFeature({
         stations: [
-          makeStation(LiftStationPosition.Bottom, [8.0, 46.0]),  // no Z
-          makeStation(LiftStationPosition.Top, [8.01, 46.05]),    // no Z
+          makeStation(LiftStationPosition.Bottom, [8.0, 46.0]), // no Z
+          makeStation(LiftStationPosition.Top, [8.01, 46.05]), // no Z
         ],
       })
       const featureNoStations = makeLiftFeature({ stations: [] })
@@ -176,21 +189,21 @@ describe('Lift', () => {
 
   describe('getFormattedLiftType', () => {
     it('should format lift types correctly', () => {
-      expect(getFormattedLiftType(LiftType.ChairLift)).toBe('Chairlift');
-      expect(getFormattedLiftType(LiftType.Gondola)).toBe('Gondola');
-      expect(getFormattedLiftType(LiftType.MagicCarpet)).toBe('Magic Carpet');
-    });
-  });
+      expect(getFormattedLiftType(LiftType.ChairLift)).toBe('Chairlift')
+      expect(getFormattedLiftType(LiftType.Gondola)).toBe('Gondola')
+      expect(getFormattedLiftType(LiftType.MagicCarpet)).toBe('Magic Carpet')
+    })
+  })
 
   describe('getLiftColor', () => {
     it('should return dim red for disused lifts', () => {
-      expect(getLiftColor(Status.Disused)).toBe('hsl(0, 53%, 42%)');
-      expect(getLiftColor(Status.Abandoned)).toBe('hsl(0, 53%, 42%)');
-    });
+      expect(getLiftColor(Status.Disused)).toBe('hsl(0, 53%, 42%)')
+      expect(getLiftColor(Status.Abandoned)).toBe('hsl(0, 53%, 42%)')
+    })
 
     it('should return bright red for operating lifts', () => {
-      expect(getLiftColor(Status.Operating)).toBe('hsl(0, 82%, 42%)');
-      expect(getLiftColor(Status.Construction)).toBe('hsl(0, 82%, 42%)');
-    });
-  });
-});
+      expect(getLiftColor(Status.Operating)).toBe('hsl(0, 82%, 42%)')
+      expect(getLiftColor(Status.Construction)).toBe('hsl(0, 82%, 42%)')
+    })
+  })
+})

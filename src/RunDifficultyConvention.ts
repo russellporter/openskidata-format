@@ -1,7 +1,7 @@
-import booleanPointInPolygon from "@turf/boolean-point-in-polygon";
-import turfCenter from "@turf/center";
-import * as turf from "@turf/helpers";
-import { AllGeoJSON } from "@turf/helpers";
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon'
+import turfCenter from '@turf/center'
+import * as turf from '@turf/helpers'
+import { AllGeoJSON } from '@turf/helpers'
 
 /**
  * Run difficulty colors vary by region. This enum defines the color convention used for runs at a ski area.
@@ -286,7 +286,7 @@ const northAmericanConventionGeometry = turf.multiPolygon([
       [-79.49790751939359, 8.895517276865164],
     ],
   ],
-]);
+])
 
 const japanConventionGeometry = turf.polygon([
   [
@@ -305,13 +305,13 @@ const japanConventionGeometry = turf.polygon([
     [129.38176008175282, 34.88162789041118],
     [122.40443764161375, 24.25555191895947],
   ],
-]);
+])
 
 /**
  * Determines the run difficulty convention for a given geographic location.
  * Based on the center point of the geometry, returns the appropriate regional
  * convention for ski run difficulty ratings.
- * 
+ *
  * @param geojson - GeoJSON geometry to determine the center location from
  * @returns The appropriate run difficulty convention for the location
  * @throws Error if the center of geometry cannot be determined
@@ -319,17 +319,16 @@ const japanConventionGeometry = turf.polygon([
 export function getRunDifficultyConvention(
   geojson: AllGeoJSON,
 ): RunDifficultyConvention {
-  const point = turfCenter(geojson).geometry;
+  const point = turfCenter(geojson).geometry
   if (!point) {
-    throw "Cannot determine center of geometry";
+    throw 'Cannot determine center of geometry'
   }
 
   if (booleanPointInPolygon(point, japanConventionGeometry)) {
-    return RunDifficultyConvention.JAPAN;
+    return RunDifficultyConvention.JAPAN
   } else if (booleanPointInPolygon(point, northAmericanConventionGeometry)) {
-    return RunDifficultyConvention.NORTH_AMERICA;
+    return RunDifficultyConvention.NORTH_AMERICA
   } else {
-    return RunDifficultyConvention.EUROPE;
+    return RunDifficultyConvention.EUROPE
   }
 }
-

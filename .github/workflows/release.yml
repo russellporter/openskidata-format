@@ -8,8 +8,8 @@ on:
     types: [created]
 
 permissions:
-  id-token: write  # Required for OIDC npm publish
-  contents: write  # Required to create GitHub releases and tags
+  id-token: write # Required for OIDC npm publish
+  contents: write # Required to create GitHub releases and tags
 
 jobs:
   create-release:

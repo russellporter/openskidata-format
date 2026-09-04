@@ -43,14 +43,19 @@ export function computeViewportHint(
   // Collect all coordinates (for bbox + elevation stats) and consecutive segment pairs
   // (for the downhill bearing calculation).
   const allCoords: [number, number, number][] = []
-  const bearingSegments: [[number, number, number], [number, number, number]][] =
-    []
+  const bearingSegments: [
+    [number, number, number],
+    [number, number, number],
+  ][] = []
 
   for (const geom of geometries) {
     collectGeometry(geom, allCoords, bearingSegments)
   }
 
-  if (allCoords.length === 0) throw new Error('computeViewportHint: no coordinates found in provided geometries')
+  if (allCoords.length === 0)
+    throw new Error(
+      'computeViewportHint: no coordinates found in provided geometries',
+    )
 
   let minLng = Infinity,
     maxLng = -Infinity
@@ -72,9 +77,7 @@ export function computeViewportHint(
   for (const [[lng0, lat0, elev0], [lng1, lat1, elev1]] of bearingSegments) {
     if (elev0 === elev1) continue
     const [fromLng, fromLat, toLng, toLat] =
-      elev0 > elev1
-        ? [lng0, lat0, lng1, lat1]
-        : [lng1, lat1, lng0, lat0]
+      elev0 > elev1 ? [lng0, lat0, lng1, lat1] : [lng1, lat1, lng0, lat0]
     const bear = greatCircleBearing(fromLat, fromLng, toLat, toLng)
     const len = distance([lng0, lat0], [lng1, lat1], { units: 'meters' })
     const bearingRad = (bear * Math.PI) / 180
