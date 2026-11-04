@@ -8,7 +8,7 @@ on:
   status:
   workflow_run:
     workflows:
-      - "Node CI"
+      - 'Node CI'
     types: [completed]
   workflow_dispatch:
 
@@ -22,7 +22,7 @@ jobs:
       statuses: read
     env:
       GH_TOKEN: ${{ secrets.DEPENDABOT_AUTOMERGE_TOKEN || github.token }}
-      EXPECT_CHECKS: "true"
+      EXPECT_CHECKS: 'true'
     steps:
       - name: Merge eligible Dependabot pull requests
         run: |
